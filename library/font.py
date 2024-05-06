@@ -20,7 +20,20 @@ class Font:
         self.width = self.size[0]
         self.height = self.size[1]
     
-    def text(self, string: str, max_width: int = -1) -> Text:
+    def text(self, string: str) -> Text:
+        # Splitting strings by newlines
+        
+        if "\n" in string:
+            texts = [self.text(s) for s in string.split("\n")]
+            width = max([t.get_width() for t in texts])
+            height = len(texts) * self.height
+            text = Text((width, height))
+
+            for i in range(len(texts)):
+                text.blit(texts[i].surface, (0, i * self.height))
+            
+            return text
+        
         # Parse string for icons etc
 
         pattern = re.compile(r"/([ic])\[([^\]]+)\]")
@@ -42,6 +55,10 @@ class Font:
                 
                 i += match.end() - match.start()
             else:
+                if string[i] not in self.chars:
+                    print(string)
+                    raise AttributeError(f"'{string[i]} not found in font.'")
+
                 surfaces.append(self.char_sheet.sprite(self.chars[string[i]]))
                 i += 1
             
@@ -49,7 +66,7 @@ class Font:
 
         # Get the dimensions of the new text object
 
-        width = (len(surfaces) if max_width == -1 else max_width) * self.width
+        width = len(surfaces) * self.width
         height = math.ceil(len(surfaces) * self.width / width) * self.height
         cols = width / self.width
 

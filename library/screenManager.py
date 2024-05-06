@@ -39,7 +39,7 @@ class ScreenManager:
     def peek(self) -> Screen | None:
         return self.top
     
-    def loop(self):
+    def loop(self, screen: pygame.Surface):
         if self.top == None:
             raise Exception("No screen has been pushed yet.")
 
@@ -53,6 +53,6 @@ class ScreenManager:
                         return
 
                 current.update()
-                current.draw()
+                current.draw(screen)
                 
                 self.gm.time.tick()

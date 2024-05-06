@@ -6,19 +6,14 @@ from library.screenManager import ScreenManager
 
 from screen.title import TitleScreen
 
-from constant.fonts import *
-
 pygame.init()
-screen = pygame.display.set_mode(pygame.display.get_desktop_sizes()[0], pygame.FULLSCREEN | pygame.RESIZABLE)
+screen = pygame.display.set_mode(pygame.display.get_desktop_sizes()[1], pygame.RESIZABLE)
 
 gm = GameManager()
 gs = GameState()
 sm = ScreenManager(gm, gs)
 
 sm.push(TitleScreen)
-
-sm.loop()
-
-# asdfasdfasdfasdf
+sm.loop(screen)
 
 pygame.quit()

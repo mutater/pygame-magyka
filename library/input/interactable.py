@@ -1,29 +1,40 @@
 import pygame
 
 from library.common import *
-from library.input.inputCode import InputCode
+from library.input.inputCode import InputCode, InputCodeValue
+
+class EventCallable(Protocol):
+    def __call__(self, event: pygame.event.Event) -> None:
+        pass
+
+CallbackValue = Tuple[str, EventCallable]
 
 class Interactable:
     def __init__(self):
         self.rect = pygame.Rect(0, 0, 0, 0)
 
+        self.next: Interactable | None = None
+        self.prev: Interactable | None = None
+
         self.color = pygame.Color("white")
-        self.color_disabled = pygame.Color("white")
+        self.color_disabled = pygame.Color("darkgray")
         self.color_normal = pygame.Color("white")
-        self.color_selected = pygame.Color("white")
-        self.color_pressed = pygame.Color("white")
+        self.color_selected = pygame.Color("lightblue")
+        self.color_pressed = pygame.Color("gray")
 
         self._enabled = True
         self._pressed = False
         self._selected = False
 
-        self.callbacks: List[Callable[[pygame.event.Event]]] = []
+        self.callbacks: Dict[str, EventCallable] = {}
 
         self.esc_cancels = True
         
         self.keys: List[InputCode] = []
         self.buttons: List[InputCode] = []
     
+    # Getters / Setters
+
     @property
     def enabled(self):
         return self._enabled
@@ -53,71 +64,93 @@ class Interactable:
         if self.enabled and not self.pressed:
             self.color = self.color_selected if value else self.color_normal
 
-    def set_keys(self, keys: Tuple[InputCode]):
-        
-        self.keys.clear()
-        for key in keys:
-            self.keys.append(key)
-    
-    def add_key(self, key: int, callback_id: List[int] | None = None):
-        self.keys.append((key, callback_id))
+    # Methods
 
-    def set_buttons(self, buttons: List[Tuple[int, List[int] | None]]):
-        self.buttons.clear()
+    def _add_input_code(self, input_code_list: List[InputCode], input_code: InputCodeValue):
+        if type(input_code) is Tuple:
+            input_code_list.append(InputCode(input_code[0], to_list(input_code[1])))
+        else:
+            input_code_list.append(InputCode(input_code)) # type: ignore
+
+    def add_key(self, key: InputCodeValue):
+        self._add_input_code(self.keys, key)
+
+    def add_keys(self, keys: List[InputCodeValue]):
+        for key in keys:
+            self.add_key(key)
+
+    def set_keys(self, keys: List[InputCodeValue]):
+        self.keys.clear()
+        self.add_keys(keys)
+
+    def add_button(self, button: InputCodeValue):
+        self._add_input_code(self.buttons, button)
+    
+    def add_buttons(self, buttons: List[InputCodeValue]):
         for button in buttons:
-            self.add_button(button[0], button[1])
+            self.add_button(button)
+
+    def set_buttons(self, buttons: List[InputCodeValue]):
+        self.buttons.clear()
+        self.add_buttons(buttons)
+
+    def clear_pressed(self):
+        for key in self.keys:
+            key.pressed = False
+        
+        for button in self.buttons:
+            button.pressed = False
+        
+        self.pressed = False
     
-    def add_button(self, button: int, callback_id: List[int] | None = None):
-        self.buttons.append((button, callback_id))
+    def add_callback(self, callback: CallbackValue):
+        self.callbacks[callback[0]] = callback[1]
     
-    def set_callbacks(self, callbacks: List[Callable[[pygame.event.Event]]]):
-        self.callbacks.clear()
+    def add_callbacks(self, callbacks: List[CallbackValue]):
         for callback in callbacks:
             self.add_callback(callback)
-    
-    def add_callback(self, callback: Callable[[pygame.event.Event]]):
-        self.callbacks.append(callback)
 
-    def call_callbacks(self, event: pygame.event.Event, input_code: Tuple[int, List[int] | None]):
-        for i in range(len(self.callbacks)):
-            if input_code[1] != None and i in input_code[1]:
-                self.callbacks[i](event)
+    def set_callbacks(self, callbacks: List[CallbackValue]):
+        self.callbacks.clear()
+        self.add_callbacks(callbacks)
+
+    def _call_callbacks(self, event: pygame.event.Event, input_code: InputCode):
+        for k in self.callbacks:
+            if input_code.has_callback(k):
+                self.callbacks[k](event)
         
-        if event.type == pygame.KEYDOWN:
-            self.keys_pressed[input_code[0]] = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            self.buttons_pressed[input_code[0]] = False
-        
-        self.pressed = any(self.keys_pressed.items()) or any(self.buttons_pressed.items())
+        self.clear_pressed()
 
     def on_event(self, event: pygame.event.Event):
         if event.type == pygame.KEYDOWN:
-            for button in self.keys:
-                if event.key == button[0]:
-                    self.keys_pressed[event.key] = True
+            for key in self.keys:
+                if event.key == key.code:
+                    key.pressed = True
+                    self.pressed = True
                     break
 
             if self.esc_cancels and event.key == pygame.K_ESCAPE:
-                self.keys_pressed.clear()
-                self.buttons_pressed.clear()
+                self.clear_pressed()
+        
         elif event.type == pygame.KEYUP:
-            if self.keys_pressed.get(event.key, False):
-                self.call_callbacks
-                self.keys_pressed[event.key] = False
+            for key in self.keys:
+                if event.key == key.code:
+                    self._call_callbacks(event, key)
+        
         elif event.type == pygame.MOUSEBUTTONDOWN:
             for button in self.buttons:
-                if event.button == button[0]:
-                    self.buttons_pressed[event.button] = True
+                if event.button == button.code:
+                    button.pressed = True
+                    self.pressed = True
                     break
-        elif event.type == pygame.MOUSEBUTTONUP:
-            if self.buttons_pressed.get(event.button, False) and self.rect.collidepoint(event.pos):
-                self.call_callbacks(event)
-                self.buttons_pressed[event.button] = False
-        elif event.type == pygame.MOUSEMOTION:
-            if self.rect.collidepoint(event.pos):
-                self.selected = True
         
-        self.pressed = any(self.keys_pressed.items()) or any(self.buttons_pressed.items())
+        elif event.type == pygame.MOUSEBUTTONUP:
+            for button in self.buttons:
+                if event.button == button.code and self.rect.collidepoint(event.pos):
+                    self._call_callbacks(event, button)
+        
+        elif event.type == pygame.MOUSEMOTION:
+            self.selected = self.rect.collidepoint(event.pos)
     
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: pygame.Surface, offset: Coordinate = (0, 0)):
         pass

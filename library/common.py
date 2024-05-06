@@ -1,4 +1,4 @@
-from typing import Union, Tuple, List, Dict, Sequence, Protocol, Callable
+from typing import Union, Tuple, List, Dict, Sequence, Protocol, Callable, Optional
 import pygame
 
 Coordinate = Union[Tuple[float, float], Sequence[float], pygame.Vector2]
@@ -20,8 +20,6 @@ RGBAOutput = Tuple[int, int, int, int]
 RGBColorValue = Union[pygame.Color, Tuple[int, int, int]]
 ColorValue = Union[pygame.Color, int, str, Tuple[int, int, int], RGBAOutput, Sequence[int]]
 
-InputCodeValue = Union[int, Tuple[int, int]]
-
 def replace_color(source: pygame.Surface, old: ColorValue, new: ColorValue):
     if not isinstance(old, pygame.Color):
         try:
@@ -40,8 +38,14 @@ def replace_color(source: pygame.Surface, old: ColorValue, new: ColorValue):
             if source.get_at((x, y)) == old:
                 source.set_at((x, y), new)
 
-def rgb_to_hex(rgb: ColorValue):
-    if not isinstance(rgb, pygame.Color):
-        rgb = pygame.Color(rgb)
+def to_hex(color: ColorValue):
+    if not isinstance(color, pygame.Color):
+        color = pygame.Color(color)
     
-    return f"#{rgb.r:02X}{rgb.g:02X}{rgb.b:02X}"
+    return f"#{color.r:02X}{color.g:02X}{color.b:02X}"
+
+def to_list(var) -> List:
+    return var if type(var) is list else [var]
+
+def add_coords(coord_a: Coordinate, coord_b: Coordinate) -> Coordinate:
+    return (coord_a[0] + coord_b[0], coord_a[1] + coord_b[1])

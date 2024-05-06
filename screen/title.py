@@ -6,6 +6,8 @@ if TYPE_CHECKING:
     from library.screenManager import ScreenManager
 
 from library.screen import Screen
+from library.input.interactable import Interactable
+from library.input.button import Button
 
 from constant.fonts import *
 
@@ -36,12 +38,31 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
         new_title_string = ""
 
         for i in range(len(title_string_split)):
-            new_title_string += f"/c[{rgb_to_hex((25, 50 + i * 5, 250 - i * 5))}]{title_string_split[i]}\n"
+            new_title_string += f"/c[{to_hex((25, 50 + i * 5, 250 - i * 5))}]{title_string_split[i]}\n"
         
         self.title_text = fonts.text(new_title_string)
 
-    def update(self):
-        pass
+        # Interactables
+
+        self.test = Interactable()
+        self.test.set_keys([pygame.K_a, pygame.K_b])
+        self.test.set_callbacks([
+            ("main", self.print)
+        ])
+        self.interactables.append(self.test)
+
+        self.test2 = Button((umx, umy * 15), fontm.text("Button")).with_inputs(pygame.K_b, self.print)
+        self.interactables.append(self.test2)
+
+    def update(self, events: List[pygame.event.Event]):
+        self.update_interactables(events)
 
     def draw(self, screen: pygame.Surface):
         self.title_text.draw(screen, (umx, umy))
+
+        self.draw_interactables(screen)
+    
+    # Callbacks
+
+    def print(self, event: pygame.event.Event):
+        print("hello")

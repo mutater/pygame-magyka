@@ -48,11 +48,13 @@ class ScreenManager:
 
             current.start()
             while current == self.top:
-                for event in pygame.event.get():
+                events = pygame.event.get()
+
+                for event in events:
                     if event.type == pygame.QUIT:
                         return
 
-                current.update()
+                current.update(events)
 
                 screen.fill("#080f18")
 

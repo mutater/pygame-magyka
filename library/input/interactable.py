@@ -26,7 +26,10 @@ class Interactable:
         self._pressed = False
         self._selected = False
 
-        self.callbacks: Dict[str, EventCallable] = {}
+        def empty(event: pygame.event.Event):
+            pass
+
+        self.callbacks: Dict[str, EventCallable] = {"main": empty}
 
         self.esc_cancels = True
         
@@ -152,5 +155,9 @@ class Interactable:
         elif event.type == pygame.MOUSEMOTION:
             self.selected = self.rect.collidepoint(event.pos)
     
+    def update(self, events: List[pygame.event.Event]):
+        for event in events:
+            self.on_event(event)
+
     def draw(self, surface: pygame.Surface, offset: Coordinate = (0, 0)):
         pass

@@ -14,14 +14,20 @@ class InputGroup(Interactable):
 
         self.add_keys([
             (pygame.K_DOWN, "next"),
-            (pygame.K_UP, "prev")
+            (pygame.K_UP, "prev"),
+            (pygame.K_RETURN, "execute")
         ])
 
         self.add_callbacks([
             ("next", self.select_next),
-            ("prev", self.select_prev)
+            ("prev", self.select_prev),
+            ("execute", self.execute)
         ])
     
+    def add_interactables(self, interactables: List[Interactable]):
+        for interactable in interactables:
+            self.add_interactable(interactable)
+
     def add_interactable(self, interactable: Interactable):
         if self.head == None or self.tail == None:
             self.head = interactable
@@ -40,9 +46,15 @@ class InputGroup(Interactable):
     
     def select_prev(self, event: pygame.event.Event):
         if self.selected != None:
+            self.selected.selected = False
             self.selected = self.selected.prev
+            self.selected.selected = True
         else:
             self.selected = self.tail
+    
+    def execute(self, event: pygame.event.Event):
+        if self.selected != None:
+            self.callbacks["main"](event)
 
     def on_event(self, event: pygame.event.Event):
         i = self.head

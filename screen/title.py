@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from library.screenManager import ScreenManager
 
 from library.screen import Screen
-from library.input.interactable import Interactable
+from library.input.inputGroup import InputGroup
 from library.input.button import Button
 
 from constant.fonts import *
@@ -44,23 +44,24 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
 
         # Interactables
 
-        self.test = Interactable()
-        self.test.set_keys([pygame.K_a, pygame.K_b])
-        self.test.set_callbacks([
-            ("main", self.print)
-        ])
-        self.interactables.append(self.test)
-
+        self.test1 = Button((umx, umy * 14), fontm.text("Button")).with_inputs(pygame.K_a, self.print)
         self.test2 = Button((umx, umy * 15), fontm.text("Button")).with_inputs(pygame.K_b, self.print)
-        self.interactables.append(self.test2)
+        self.test3 = Button((umx, umy * 16), fontm.text("Button")).with_inputs(pygame.K_c, self.print)
+
+        self.inputGroup = InputGroup((0, 0))
+        self.inputGroup.add_interactables([
+            self.test1,
+            self.test2,
+            self.test3
+        ])
 
     def update(self, events: List[pygame.event.Event]):
-        self.update_interactables(events)
+        self.inputGroup.update(events)
 
     def draw(self, screen: pygame.Surface):
         self.title_text.draw(screen, (umx, umy))
 
-        self.draw_interactables(screen)
+        self.inputGroup.draw(screen)
     
     # Callbacks
 

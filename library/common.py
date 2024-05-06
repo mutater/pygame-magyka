@@ -20,6 +20,8 @@ RGBAOutput = Tuple[int, int, int, int]
 RGBColorValue = Union[pygame.Color, Tuple[int, int, int]]
 ColorValue = Union[pygame.Color, int, str, Tuple[int, int, int], RGBAOutput, Sequence[int]]
 
+InputCodeValue = Union[int, Tuple[int, int]]
+
 def replace_color(source: pygame.Surface, old: ColorValue, new: ColorValue):
     if not isinstance(old, pygame.Color):
         try:

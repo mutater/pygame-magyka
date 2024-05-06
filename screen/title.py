@@ -32,15 +32,16 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
  ..................................... 4888o.o88" ..... ./" ...............................
   ..................................... *68889*` ..... -` ..... By Vincent G, aka Mutater .."""
         
-        title_string = "\n".join(["/c[blue]" + string for string in title_string.split("\n")])
-        self.title_text = fontm.text(title_string)
+        title_string_split = title_string.split("\n")
+        new_title_string = ""
+
+        for i in range(len(title_string_split)):
+            new_title_string += f"/c[{rgb_to_hex((25, 50 + i * 5, 250 - i * 5))}]{title_string_split[i]}\n"
+        
+        self.title_text = fonts.text(new_title_string)
 
     def update(self):
-        print("update")
+        pass
 
     def draw(self, screen: pygame.Surface):
-        screen.fill("darkslategray")
-
-        self.title_text.draw(screen, (0, 0))
-
-        pygame.display.flip()
+        self.title_text.draw(screen, (umx, umy))

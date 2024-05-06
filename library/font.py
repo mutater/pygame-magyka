@@ -21,6 +21,9 @@ class Font:
         self.height = self.size[1]
     
     def text(self, string: str) -> Text:
+        if len(string) == 0:
+            return Text((1, 1))
+
         # Splitting strings by newlines
         
         if "\n" in string:

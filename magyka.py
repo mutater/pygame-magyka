@@ -7,7 +7,7 @@ from library.screenManager import ScreenManager
 from screen.title import TitleScreen
 
 pygame.init()
-screen = pygame.display.set_mode(pygame.display.get_desktop_sizes()[1], pygame.RESIZABLE)
+screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
 
 gm = GameManager()
 gs = GameState()

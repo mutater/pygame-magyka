@@ -53,6 +53,11 @@ class ScreenManager:
                         return
 
                 current.update()
+
+                screen.fill("#080f18")
+
                 current.draw(screen)
                 
+                pygame.display.flip()
+
                 self.gm.time.tick()

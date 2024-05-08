@@ -42,6 +42,8 @@ class Interact:
         self.color_selected = pygame.Color("lightblue")
         self.color_pressed = pygame.Color("gray")
 
+        self.draws: List[Draw] = []
+
         self._enabled = True
         self._pressed = False
         self._selected = False
@@ -81,6 +83,17 @@ class Interact:
             self.color = self.color_selected if value else self.color_normal
 
     # Methods
+
+    def add_draw(self, draw: Draw):
+        self.draws.append(draw)
+    
+    def add_draws(self, draws: List[Draw]):
+        for draw in draws:
+            self.add_draw(draw)
+    
+    def set_draws_color(self, color: ColorValue):
+        for draw in self.draws:
+            draw.color = pygame.Color(color)
 
     def add_key(self, key: int, callbacks: EventCallbackValue):
         if key in self.keyActions:
@@ -154,3 +167,7 @@ class Interact:
     def update(self, events: List[pygame.event.Event]):
         for event in events:
             self.on_event(event)
+    
+    def draw(self, surface: pygame.surface.Surface):
+        for draw in self.draws:
+            draw.draw(surface)

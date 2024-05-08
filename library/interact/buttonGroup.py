@@ -18,10 +18,11 @@ class ButtonGroup(Group):
             word = interacts[i][1]
             key_code = interacts[i][2]
             callbacks = interacts[i][3]
+            position = (self.rect.left, self.rect.top + i * font.height * 2)
 
             interact_button = Button(
-                (self.rect.left, self.rect.top + i * font.height * 2),
-                font.text(f"[{letter}] {word}"),
+                position,
+                font.text(f"[{letter}] {word}", position),
                 callbacks
             )
 

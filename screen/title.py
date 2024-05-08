@@ -36,7 +36,7 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
         for i in range(len(title_string_split)):
             new_title_string += f"/c[{to_hex((25, 50 + i * 5, 250 - i * 5))}]{title_string_split[i]}\n"
         
-        self.title_text = fonts.text(new_title_string)
+        self.title_text = fonts.text(new_title_string, (umx, umy))
 
         # interacts
 
@@ -54,7 +54,7 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
         self.buttons.update(events)
 
     def draw(self, screen: pygame.Surface):
-        self.title_text.draw(screen, (umx, umy))
+        self.title_text.draw(screen)
 
         self.buttons.draw(screen)
     

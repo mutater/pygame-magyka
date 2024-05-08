@@ -20,17 +20,17 @@ class Font:
         self.width = self.size[0]
         self.height = self.size[1]
     
-    def text(self, string: str) -> Text:
+    def text(self, string: str, dest: Coordinate) -> Text:
         if len(string) == 0:
-            return Text((1, 1))
+            return Text(dest, (1, 1))
 
         # Splitting strings by newlines
         
         if "\n" in string:
-            texts = [self.text(s) for s in string.split("\n")]
+            texts = [self.text(s, dest) for s in string.split("\n")]
             width = max([t.get_width() for t in texts])
             height = len(texts) * self.height
-            text = Text((width, height))
+            text = Text(dest, (width, height))
 
             for i in range(len(texts)):
                 text.blit(texts[i].surface, (0, i * self.height))
@@ -75,7 +75,7 @@ class Font:
 
         # Create the new text object and blit the characters
 
-        text = Text((width, height))
+        text = Text(dest, (width, height))
         color = "white"
 
         for i in range(len(surfaces)):

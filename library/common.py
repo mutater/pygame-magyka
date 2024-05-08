@@ -1,4 +1,4 @@
-from typing import Union, Tuple, List, Dict, Sequence, Protocol, Callable, Optional
+from typing import Union, Tuple, List, Dict, Sequence, Protocol, Callable, Optional, Literal
 import pygame
 
 Coordinate = Union[Tuple[float, float], Sequence[float], pygame.Vector2]
@@ -16,9 +16,8 @@ class _HasRectAttribute(Protocol):
 
 RectValue = Union[_CanBeRect, _HasRectAttribute]
 
-RGBAOutput = Tuple[int, int, int, int]
 RGBColorValue = Union[pygame.Color, Tuple[int, int, int]]
-ColorValue = Union[pygame.Color, int, str, Tuple[int, int, int], RGBAOutput, Sequence[int]]
+ColorValue = Union[RGBColorValue, str, Sequence[int]]
 
 def replace_color(source: pygame.Surface, old: ColorValue, new: ColorValue):
     if not isinstance(old, pygame.Color):

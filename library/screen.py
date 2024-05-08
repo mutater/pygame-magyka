@@ -4,7 +4,7 @@ if TYPE_CHECKING:
     from library.gameManager import GameManager
     from library.gameState import GameState
     from library.screenManager import ScreenManager
-    from library.input.interactable import Interactable
+    from library.interact.interact import Interact
 
 import pygame
 from typing import List

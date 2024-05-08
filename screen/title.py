@@ -5,9 +5,10 @@ if TYPE_CHECKING:
     from library.gameState import GameState
     from library.screenManager import ScreenManager
 
+import sys
+
 from library.screen import Screen
-from library.input.inputGroup import InputGroup
-from library.input.button import Button
+import library.interact as interact
 
 from constant.fonts import *
 
@@ -42,28 +43,30 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
         
         self.title_text = fonts.text(new_title_string)
 
-        # Interactables
+        # interacts
 
-        self.test1 = Button((umx, umy * 14), fontm.text("Button")).with_inputs(pygame.K_a, self.print)
-        self.test2 = Button((umx, umy * 15), fontm.text("Button")).with_inputs(pygame.K_b, self.print)
-        self.test3 = Button((umx, umy * 16), fontm.text("Button")).with_inputs(pygame.K_c, self.print)
-
-        self.inputGroup = InputGroup((0, 0))
-        self.inputGroup.add_interactables([
-            self.test1,
-            self.test2,
-            self.test3
+        self.buttons = interact.ButtonGroup((umx * 2, umy * 13), fontm, [
+            ("N", "New Game", pygame.K_n, self.print),
+            ("C", "Continue", pygame.K_c, self.print),
+            ("O", "Options", pygame.K_o, self.print),
+            ("H", "Help", pygame.K_h, self.print),
+            ("Q", "Quit", pygame.K_q, self.quit)
         ])
 
+        self.buttons.selected = True
+
     def update(self, events: List[pygame.event.Event]):
-        self.inputGroup.update(events)
+        self.buttons.update(events)
 
     def draw(self, screen: pygame.Surface):
         self.title_text.draw(screen, (umx, umy))
 
-        self.inputGroup.draw(screen)
+        self.buttons.draw(screen)
     
     # Callbacks
 
     def print(self, event: pygame.event.Event):
         print("hello")
+    
+    def quit(self, event: pygame.event.Event):
+        sys.exit(0)

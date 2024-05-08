@@ -82,5 +82,8 @@ class Group(Interact):
                     break
     
     def draw(self, surface: pygame.Surface):
+        for draw in self.draws:
+            draw.draw(surface)
+
         for interact in self.interacts:
             interact.draw(surface)

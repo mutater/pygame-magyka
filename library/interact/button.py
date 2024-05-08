@@ -1,6 +1,6 @@
 from library.common import *
 from library.interact.interact import Interact, EventCallbackValue
-from library.text import Text
+from library.draw.text import Text
 
 class Button(Interact):
     def __init__(self, dest: Coordinate, text: Text, callbacks: EventCallbackValue):

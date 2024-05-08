@@ -3,7 +3,7 @@ from library.font import Font
 from library.interact.interact import EventCallbackValue
 from library.interact.button import Button
 from library.interact.group import Group
-from library.interact.Key import Key
+from library.interact.key import Key
 
 ButtonActionValue = Tuple[str, str, int, EventCallbackValue]
 
@@ -20,7 +20,7 @@ class ButtonGroup(Group):
             callbacks = interacts[i][3]
 
             interact_button = Button(
-                (self.rect.left, self.rect.top + i * font.height),
+                (self.rect.left, self.rect.top + i * font.height * 2),
                 font.text(f"[{letter}] {word}"),
                 callbacks
             )

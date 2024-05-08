@@ -1,4 +1,5 @@
 from library.common import *
+from library.draw.draw import Draw
 
 class EventCallback(Protocol):
     def __call__(self, event: pygame.event.Event) -> None:
@@ -153,6 +154,3 @@ class Interact:
     def update(self, events: List[pygame.event.Event]):
         for event in events:
             self.on_event(event)
-
-    def draw(self, surface: pygame.Surface):
-        pass

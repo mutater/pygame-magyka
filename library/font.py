@@ -3,7 +3,7 @@ import re
 from typing import List, Dict
 
 from library.common import *
-from library.text import *
+from library.draw.text import *
 from library.sheet import *
 
 class Font:

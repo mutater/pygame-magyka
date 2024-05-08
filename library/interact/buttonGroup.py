@@ -8,18 +8,27 @@ from library.interact.Key import Key
 ButtonActionValue = Tuple[str, str, int, EventCallbackValue]
 
 class ButtonGroup(Group):
-    def __init__(self, dest: Coordinate, font: Font, inputs_data: List[ButtonActionValue]):
+    def __init__(self, dest: Coordinate, font: Font, interacts: List[ButtonActionValue]):
         super().__init__(dest)
 
         self.font = font
 
-        y_position = self.rect.top
+        for i in range(len(interacts)):
+            letter = interacts[i][0]
+            word = interacts[i][1]
+            key_code = interacts[i][2]
+            callbacks = interacts[i][3]
 
-        for data in inputs_data:
-            interact_button = Button((self.rect.left, y_position), font.text(f"[{data[0]}] {data[1]}"), data[3])
-            interact_key = Key([data[2]], data[3])
+            interact_button = Button(
+                (self.rect.left, self.rect.top + i * font.height),
+                font.text(f"[{letter}] {word}"),
+                callbacks
+            )
 
-            y_position += font.height
-            
+            interact_key = Key(
+                key_code,
+                callbacks
+            )
+
             self.add_item(interact_button)
             self.add_interact(interact_key)

@@ -65,6 +65,8 @@ class Group(Interact):
         if not self.enabled or not self.selected:
             return
         
+        super().on_event(event)
+
         if event.type == pygame.MOUSEMOTION:
             for item in self.items:
                 if item != self.selected_item:

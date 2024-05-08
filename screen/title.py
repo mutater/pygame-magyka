@@ -1,16 +1,11 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from library.gameManager import GameManager
-    from library.gameState import GameState
-    from library.screenManager import ScreenManager
-
 import sys
 
-from library.screen import Screen
-import library.interact as interact
-
 from constant.fonts import *
+from library.gameManager import GameManager
+from library.gameState import GameState
+import library.interact as interact
+from library.screenManager import ScreenManager
+from library.screen import Screen
 
 class TitleScreen(Screen):
     name = "title"

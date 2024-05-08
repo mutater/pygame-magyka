@@ -7,6 +7,7 @@ from library.screenManager import ScreenManager
 from screen.title import TitleScreen
 
 pygame.init()
+pygame.key.set_repeat(300, 100)
 screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
 
 gm = GameManager()

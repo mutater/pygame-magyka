@@ -45,8 +45,6 @@ class Interact:
         self._pressed = False
         self._selected = False
 
-        self.esc_cancels = True
-        
         self.keyActions: Dict[int, Action] = {}
         self.buttonActions: Dict[int, Action] = {}
     
@@ -113,24 +111,13 @@ class Interact:
         self.pressed = False
 
     def on_key_event(self, event: pygame.event.Event):
-        if event.type != pygame.KEYDOWN and event.type != pygame.KEYUP:
+        if event.type != pygame.KEYDOWN:
             return
-        
+
         if event.key not in self.keyActions:
             return
 
-        action = self.keyActions[event.key]
-
-        if event.type == pygame.KEYDOWN:
-            action.is_pressed = True
-            self.pressed = True
-
-            if self.esc_cancels and event.key == pygame.K_ESCAPE:
-                self.clear_pressed()
-        
-        elif action.is_pressed:
-            action.is_pressed = False
-            action.callbacks(event)
+        self.keyActions[event.key].callbacks(event)
     
     def on_button_event(self, event: pygame.event.Event):
         if event.type != pygame.MOUSEBUTTONDOWN and event.type != pygame.MOUSEBUTTONUP:
@@ -144,12 +131,11 @@ class Interact:
         if event.type == pygame.MOUSEBUTTONDOWN:
             action.is_pressed = True
             self.pressed = True
-
-            if self.esc_cancels and event.button == pygame.K_ESCAPE:
-                self.clear_pressed()
         
-        elif action.is_pressed and self.rect.collidepoint(event.pos):
-            action.callbacks(event)
+        elif action.is_pressed:
+            self.clear_pressed()
+            if self.rect.collidepoint(event.pos):
+                action.callbacks(event)
 
     def on_event(self, event: pygame.event.Event):
         if not self.enabled:

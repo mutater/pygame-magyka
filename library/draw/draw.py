@@ -1,15 +1,17 @@
 from library.common import *
 
 class Draw:
-    def __init__(self, dest: Coordinate, size: Coordinate):
-        self.rect = pygame.Rect(dest[0], dest[1], size[0], size[1])
+    def __init__(self, dest: Coordinate, surface: Coordinate | pygame.Surface):
+        if isinstance(surface, pygame.Surface):
+            self.rect = pygame.Rect(dest, surface.get_size())
+            self.surface = surface.copy()
+            self.draw_surface = surface.copy()
+        else:
+            self.rect = pygame.Rect(dest, surface)
+            self.surface = pygame.Surface(surface, pygame.SRCALPHA)
+            self.draw_surface = pygame.Surface(surface, pygame.SRCALPHA)
         
-        self._color = pygame.Color("black")
-        
-        self.surface = pygame.Surface(size, pygame.SRCALPHA)
-        self.draw_surface = pygame.Surface(size, pygame.SRCALPHA)
-
-        self.color = pygame.Color("white")
+        self._color = pygame.Color("white")
     
     @property
     def color(self):
@@ -40,3 +42,6 @@ class Draw:
 
     def draw(self, surface: pygame.Surface):
         surface.blit(self.draw_surface, self.rect.topleft)
+
+DrawValue = Tuple[Coordinate, pygame.Surface] | Draw
+DrawsValue = DrawValue | List[DrawValue]

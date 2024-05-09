@@ -1,7 +1,7 @@
 from library.common import *
-from . import Interact
+from . import Interact, DrawInteract
 
-class Group(Interact):
+class Group(DrawInteract):
     def __init__(self):
         super().__init__()
 
@@ -45,7 +45,6 @@ class Group(Interact):
         if self.first_item == None or self.last_item == None:
             self.first_item = interact
             self.last_item = interact
-            self.select_item(interact)
         
         interact.next = self.first_item
         interact.prev = self.last_item
@@ -98,8 +97,8 @@ class Group(Interact):
                     break
     
     def draw(self, surface: pygame.Surface):
-        for draw in self.draws:
-            draw.draw(surface)
+        super().draw(surface)
 
         for interact in self.interacts:
-            interact.draw(surface)
+            if isinstance(interact, DrawInteract):
+                interact.draw(surface)

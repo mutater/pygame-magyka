@@ -8,20 +8,40 @@ class EventCallback(Protocol):
 EventCallbackValue = EventCallback | List[EventCallback]
 
 class Action:
-    def __init__(self, callbacks: EventCallbackValue):
+    def __init__(self, callbacks: EventCallbackValue, modifiers: List[int] = []):
         self.is_pressed = False
         self._callbacks: List[EventCallback] = []
+        self.modifiers: List[int] = []
 
         if not isinstance(callbacks, list):
             self._callbacks = [callbacks]
         else:
             self._callbacks = callbacks
     
+    def add_modifiers(self, modifiers: int | List[int]):
+        if not isinstance(modifiers, list):
+            modifiers = [modifiers]
+
+        for modifier in modifiers:
+            self.modifiers.append(modifier)
+
+    def modifiers_pressed(self):
+        if len(self.modifiers) == 0:
+            return True
+        
+        keys = pygame.key.get_pressed()
+        for modifier in self.modifiers:
+            if modifier not in keys:
+                return False
+        
+        return True
+
     def callbacks(self, event: pygame.event.Event):
-        for callback in self._callbacks:
-            callback(event)
+        if self.modifiers_pressed:
+            for callback in self._callbacks:
+                callback(event)
     
-    def append(self, callbacks: EventCallbackValue):
+    def add_callbacks(self, callbacks: EventCallbackValue):
         if not isinstance(callbacks, list):
             callbacks = [callbacks]
         
@@ -36,17 +56,10 @@ class Interact:
         self.next: Interact | None = None
         self.prev: Interact | None = None
 
-        self.color = pygame.Color("white")
-        self.color_disabled = pygame.Color("darkgray")
-        self.color_normal = pygame.Color("white")
-        self.color_selected = pygame.Color("lightblue")
-        self.color_pressed = pygame.Color("gray")
-
-        self.draws: List[Draw] = []
-
         self._enabled = True
         self._pressed = False
         self._selected = False
+        self._highlighted = False
 
         self.keyActions: Dict[int, Action] = {}
         self.buttonActions: Dict[int, Action] = {}
@@ -65,10 +78,12 @@ class Interact:
         self._enabled = value
     
     def on_enabled(self):
-        self.color = self.color_normal if self.selected else self.color_normal
+        pass
     
     def on_disabled(self):
-        self.color = self.color_disabled
+        self.pressed = False
+        self.selected = False
+        self.highlighted = False
 
     @property
     def pressed(self):
@@ -82,12 +97,10 @@ class Interact:
         self._pressed = value
 
     def on_pressed(self):
-        if self.enabled:
-            self.color = self.color_pressed
+        pass
     
     def on_released(self):
-        if self.enabled:
-            self.color = self.color_selected if self.selected else self.color_normal
+        pass
 
     @property
     def selected(self):
@@ -101,34 +114,37 @@ class Interact:
         self._selected = value
 
     def on_selected(self):
-        if self.enabled and not self.pressed:
-            self.color = self.color_selected
+        pass
     
     def on_unselected(self):
-        if self.enabled and not self.pressed:
-            self.color = self.color_normal
+        pass
+
+    @property
+    def highlighted(self):
+        return self._highlighted
+    
+    @highlighted.setter
+    def highlighted(self, value: bool):
+        if self._highlighted != value:
+            self.on_highlighted() if value else self.on_unhighlighted()
+        
+        self._highlighted = value
+    
+    def on_highlighted(self):
+        pass
+        
+    def on_unhighlighted(self):
+        pass
 
     # Methods
 
-    def add_draw(self, draw: Draw):
-        self.draws.append(draw)
-    
-    def add_draws(self, draws: List[Draw]):
-        for draw in draws:
-            self.add_draw(draw)
-    
-    def clear_draws(self):
-        self.draws.clear()
-
-    def set_draws_color(self, color: ColorValue):
-        for draw in self.draws:
-            draw.color = pygame.Color(color)
-
-    def add_key(self, key: int, callbacks: EventCallbackValue):
+    def add_key(self, key: int, callbacks: EventCallbackValue, modifiers: int | List[int] = []):
         if key in self.keyActions:
-            self.keyActions[key].append(callbacks)
+            self.keyActions[key].add_callbacks(callbacks)
         else:
             self.keyActions[key] = Action(callbacks)
+        
+        self.keyActions[key].add_modifiers(modifiers)
 
     def add_keys(self, keys: List[int], callbacks: EventCallbackValue):
         for key in keys:
@@ -139,7 +155,7 @@ class Interact:
 
     def add_button(self, button: int, callbacks: EventCallbackValue):
         if button in self.buttonActions:
-            self.buttonActions[button].append(callbacks)
+            self.buttonActions[button].add_callbacks(callbacks)
         else:
             self.buttonActions[button] = Action(callbacks)
     
@@ -191,16 +207,14 @@ class Interact:
             return
         
         if event.type == pygame.MOUSEMOTION:
-            self.selected = self.rect.collidepoint(event.pos)
+            self.highlighted = self.rect.collidepoint(event.pos)
         
         if self.selected:
             self.on_key_event(event)
+        
+        if self.highlighted:
             self.on_button_event(event)
     
     def update(self, events: List[pygame.event.Event]):
         for event in events:
             self.on_event(event)
-    
-    def draw(self, surface: pygame.Surface):
-        for draw in self.draws:
-            draw.draw(surface)

@@ -1,4 +1,5 @@
 from .interact import *
+from .drawInteract import *
 from .button import *
 from .key import *
 from .group import *

@@ -3,7 +3,7 @@ import re
 from typing import List, Dict
 
 from library.common import *
-from library.draw.text import *
+from library.draw import Draw
 from library.sheet import *
 
 class Font:
@@ -20,9 +20,9 @@ class Font:
         self.width = self.size[0]
         self.height = self.size[1]
     
-    def text(self, string: str, dest: Coordinate) -> Text:
+    def text(self, string: str, dest: Coordinate) -> Draw:
         if len(string) == 0:
-            return Text(dest, (1, 1))
+            return Draw(dest, (1, 1))
 
         # Splitting strings by newlines
         
@@ -30,7 +30,7 @@ class Font:
             texts = [self.text(s, dest) for s in string.split("\n")]
             width = max([t.get_width() for t in texts])
             height = len(texts) * self.height
-            text = Text(dest, (width, height))
+            text = Draw(dest, (width, height))
 
             for i in range(len(texts)):
                 text.blit(texts[i].surface, (0, i * self.height))
@@ -75,7 +75,7 @@ class Font:
 
         # Create the new text object and blit the characters
 
-        text = Text(dest, (width, height))
+        text = Draw(dest, (width, height))
         color = "white"
 
         for i in range(len(surfaces)):

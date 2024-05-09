@@ -21,7 +21,6 @@ class ButtonGroup(Group):
             position = (self.rect.left, self.rect.top + i * font.height * 2)
 
             interact_button = Button(
-                position,
                 font.text(f"[{letter}] {word}", position),
                 callbacks
             )

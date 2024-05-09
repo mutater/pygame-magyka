@@ -1,14 +1,14 @@
 from library.common import *
-from library.draw.text import Text
+from library.draw import Draw, DrawValue
 
-from . import Interact, EventCallbackValue
+from . import DrawInteract, EventCallbackValue
 
-class Button(Interact):
-    def __init__(self, dest: Coordinate, text: Text, callbacks: EventCallbackValue):
+class Button(DrawInteract):
+    def __init__(self, draws: DrawValue | List[DrawValue], callbacks: EventCallbackValue):
         super().__init__()
         
-        self.add_draw(text)
-        self.rect = pygame.Rect(dest[0], dest[1], text.get_width(), text.get_height())
+        self.add_draws(draws)
+        self.rect = self.get_draws_rect()
 
         self.add_keys([pygame.K_RETURN, pygame.K_SPACE], callbacks)
         self.add_button(1, callbacks)

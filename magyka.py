@@ -7,7 +7,7 @@ from library.screenManager import ScreenManager
 import library.screens as screens
 
 pygame.init()
-pygame.key.set_repeat(300, 100)
+pygame.key.set_repeat(500, 100)
 
 screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
 

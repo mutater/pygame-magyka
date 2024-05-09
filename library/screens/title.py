@@ -1,17 +1,12 @@
-import sys
-
-from constant.fonts import *
-from library.gameManager import GameManager
-from library.gameState import GameState
-import library.interact as interact
-from library.screenManager import ScreenManager
+from library.common import *
+from library.constant.fonts import *
 from library.screen import Screen
 
-class TitleScreen(Screen):
-    name = "title"
+import library.interact as interact
+import library.draw as draw
 
-    def __init__(self, gm: GameManager, gs: GameState, sm: ScreenManager, name: str):
-        super().__init__(gm, gs, sm, name)
+class Title(Screen):
+    name = "title"
     
     def start(self):
         title_string = """\
@@ -64,4 +59,4 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
         print("hello")
     
     def quit(self, event: pygame.event.Event):
-        sys.exit(0)
+        self.sm.break_flag = True

@@ -1,4 +1,4 @@
-from typing import Union, Tuple, List, Dict, Sequence, Protocol, Callable, Optional, Literal
+from typing import Union, Tuple, List, Dict, Sequence, Protocol, Callable, Optional, Literal, Type
 import pygame
 
 Coordinate = Union[Tuple[float, float], Sequence[float], pygame.Vector2]

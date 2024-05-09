@@ -59,18 +59,35 @@ class Interact:
     
     @enabled.setter
     def enabled(self, value: bool):
+        if self._enabled != value:
+            self.on_enabled() if value else self.on_disabled()
+
         self._enabled = value
-        self.color = self.color_disabled if value else self.color_normal
     
+    def on_enabled(self):
+        self.color = self.color_normal if self.selected else self.color_normal
+    
+    def on_disabled(self):
+        self.color = self.color_disabled
+
     @property
     def pressed(self):
         return self._pressed
     
     @pressed.setter
     def pressed(self, value: bool):
+        if self._pressed != value:
+            self.on_pressed() if value else self.on_released()
+        
         self._pressed = value
+
+    def on_pressed(self):
         if self.enabled:
-            self.color = self.color_pressed if value else (self.color_selected if self.selected else self.color_normal)
+            self.color = self.color_pressed
+    
+    def on_released(self):
+        if self.enabled:
+            self.color = self.color_selected if self.selected else self.color_normal
 
     @property
     def selected(self):
@@ -78,9 +95,18 @@ class Interact:
     
     @selected.setter
     def selected(self, value: bool):
+        if self._selected != value:
+            self.on_selected() if value else self.on_unselected()
+        
         self._selected = value
+
+    def on_selected(self):
         if self.enabled and not self.pressed:
-            self.color = self.color_selected if value else self.color_normal
+            self.color = self.color_selected
+    
+    def on_unselected(self):
+        if self.enabled and not self.pressed:
+            self.color = self.color_normal
 
     # Methods
 
@@ -91,6 +117,9 @@ class Interact:
         for draw in draws:
             self.add_draw(draw)
     
+    def clear_draws(self):
+        self.draws.clear()
+
     def set_draws_color(self, color: ColorValue):
         for draw in self.draws:
             draw.color = pygame.Color(color)
@@ -105,6 +134,9 @@ class Interact:
         for key in keys:
             self.add_key(key, callbacks)
 
+    def clear_keys(self):
+        self.keyActions.clear()
+
     def add_button(self, button: int, callbacks: EventCallbackValue):
         if button in self.buttonActions:
             self.buttonActions[button].append(callbacks)
@@ -114,6 +146,9 @@ class Interact:
     def add_buttons(self, buttons: List[int], callbacks: EventCallbackValue):
         for button in buttons:
             self.add_button(button, callbacks)
+
+    def clear_buttons(self):
+        self.buttonActions.clear()
 
     def clear_pressed(self):
         for _, action in self.keyActions.items():
@@ -156,9 +191,7 @@ class Interact:
             return
         
         if event.type == pygame.MOUSEMOTION:
-            if self.rect.collidepoint(event.pos):
-                self.selected = True
-            return
+            self.selected = self.rect.collidepoint(event.pos)
         
         if self.selected:
             self.on_key_event(event)
@@ -168,6 +201,6 @@ class Interact:
         for event in events:
             self.on_event(event)
     
-    def draw(self, surface: pygame.surface.Surface):
+    def draw(self, surface: pygame.Surface):
         for draw in self.draws:
             draw.draw(surface)

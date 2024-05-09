@@ -1,15 +1,15 @@
 from library.common import *
 from library.font import Font
-from library.interact.interact import EventCallbackValue
-from library.interact.button import Button
-from library.interact.group import Group
-from library.interact.key import Key
+
+from . import EventCallbackValue, Button, Key, Group
 
 ButtonActionValue = Tuple[str, str, int, EventCallbackValue]
 
 class ButtonGroup(Group):
     def __init__(self, dest: Coordinate, font: Font, interacts: List[ButtonActionValue]):
-        super().__init__(dest)
+        super().__init__()
+
+        self.rect = pygame.Rect(dest[0], dest[1], 0, 0)
 
         self.font = font
 
@@ -25,11 +25,15 @@ class ButtonGroup(Group):
                 font.text(f"[{letter}] {word}", position),
                 callbacks
             )
+            self.add_item(interact_button)
 
             interact_key = Key(
                 key_code,
                 callbacks
             )
-
-            self.add_item(interact_button)
             self.add_interact(interact_key)
+
+            if i < len(interacts) - 1:
+                bar = font.text("|", add_coords(position, (font.width, font.height)))
+                self.add_draw(bar)
+

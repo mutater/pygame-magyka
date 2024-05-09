@@ -1,3 +1,3 @@
-from library.draw.draw import *
-from library.draw.group import *
-from library.draw.text import *
+from .draw import *
+from .group import *
+from .text import *

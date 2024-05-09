@@ -4,10 +4,12 @@ class Draw:
     def __init__(self, dest: Coordinate, size: Coordinate):
         self.rect = pygame.Rect(dest[0], dest[1], size[0], size[1])
         
-        self._color = pygame.Color("white")
+        self._color = pygame.Color("black")
         
         self.surface = pygame.Surface(size, pygame.SRCALPHA)
         self.draw_surface = pygame.Surface(size, pygame.SRCALPHA)
+
+        self.color = pygame.Color("white")
     
     @property
     def color(self):
@@ -15,9 +17,10 @@ class Draw:
     
     @color.setter
     def color(self, value):
-        if self.color != value:
-            self.color = value
-            replace_color(self.draw_surface, (255, 255, 255), self.color)
+        if self._color != value:
+            self._color = value
+            self.draw_surface = self.surface.copy()
+            replace_color(self.draw_surface, (255, 255, 255), value)
 
     def get_width(self) -> int:
         return self.surface.get_width()
@@ -27,6 +30,7 @@ class Draw:
 
     def blit(self, surface: pygame.Surface, dest: Coordinate):
         self.surface.blit(surface, dest)
+        self.draw_surface = self.surface.copy()
     
     def move(self, offset: Coordinate):
         self.rect.move_ip(offset)

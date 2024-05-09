@@ -1,5 +1,6 @@
 from library.common import *
-from library.interact.interact import Interact, EventCallbackValue
+
+from . import Interact, EventCallbackValue
 
 class Key(Interact):
     def __init__(self, keys: int | List[int], callbacks: EventCallbackValue):

@@ -1,22 +1,32 @@
 from library.common import *
-from library.interact.interact import Interact
+from . import Interact
 
 class Group(Interact):
-    def __init__(self, dest: Coordinate):
+    def __init__(self):
         super().__init__()
-        
-        self.rect = pygame.Rect(dest[0], dest[1], 0, 0)
+
+        self.rect = pygame.Rect(0, 0, 0, 0)
         
         self.interacts: List[Interact] = []
         self.items: List[Interact] = []
 
-        self.start_item: Interact | None = None
-        self.end_item: Interact | None = None
+        self.first_item: Interact | None = None
+        self.last_item: Interact | None = None
         self.selected_item: Interact | None = None
 
-        self.add_key(pygame.K_DOWN, self.next_item)
-        self.add_key(pygame.K_UP, self.prev_item)
+        self.add_key(pygame.K_DOWN, self.select_next)
+        self.add_key(pygame.K_UP, self.select_prev)
+
+        self.selected = True
     
+    def on_selected(self):
+        super().on_selected()
+        self.select_first()
+
+    def on_unselected(self):
+        super().on_unselected()
+        self.unselect_all_but(None)
+
     def add_interacts(self, interacts: List[Interact]):
         for interact in interacts:
             self.add_interact(interact)
@@ -32,45 +42,51 @@ class Group(Interact):
         self.add_interact(interact)
         self.items.append(interact)
         
-        if self.start_item == None or self.end_item == None:
-            self.start_item = interact
-            self.end_item = interact
+        if self.first_item == None or self.last_item == None:
+            self.first_item = interact
+            self.last_item = interact
+            self.select_item(interact)
         
-        interact.next = self.start_item
-        interact.prev = self.end_item
+        interact.next = self.first_item
+        interact.prev = self.last_item
         
-        self.end_item.next = interact
-        self.start_item.prev = interact
-        self.end_item = interact
+        self.last_item.next = interact
+        self.first_item.prev = interact
+        self.last_item = interact
     
-    def next_item(self, event: pygame.event.Event):
-        self.set_selected_item(self.start_item if self.selected_item == None else self.selected_item.next)
+    def select_next(self, event: pygame.event.Event):
+        self.select_item(self.first_item if self.selected_item == None else self.selected_item.next)
     
-    def prev_item(self, event: pygame.event.Event):
-        self.set_selected_item(self.end_item if self.selected_item == None else self.selected_item.prev)
+    def select_prev(self, event: pygame.event.Event):
+        self.select_item(self.last_item if self.selected_item == None else self.selected_item.prev)
     
-    def set_selected_item(self, new_selected: Interact | None):
-        if not self.enabled or not self.selected:
-            return
+    def select_first(self):
+        if self.first_item != None:
+            self.select_item(self.first_item)
 
+    def unselect_all_but(self, item: Interact | None):
+        for i in self.items:
+            if i != item:
+                i.selected = False
+
+    def select_item(self, item: Interact | None):
         if self.selected_item != None:
             self.selected_item.selected = False
         
-        if new_selected != None:
-            new_selected.selected = True
+        if item != None:
+            item.selected = True
         
-        self.selected_item = new_selected
+        self.selected_item = item
 
     def on_event(self, event: pygame.event.Event):
-        if not self.enabled or not self.selected:
+        if not self.enabled:
             return
         
-        super().on_event(event)
+        if self.selected:
+            self.on_key_event(event)
 
         if event.type == pygame.MOUSEMOTION:
-            for item in self.items:
-                if item != self.selected_item:
-                    item.selected = False
+            self.unselect_all_but(self.selected_item)
 
         for interact in self.interacts:
             interact.on_event(event)
@@ -78,7 +94,7 @@ class Group(Interact):
         if event.type == pygame.MOUSEMOTION:
             for item in self.items:
                 if item != self.selected_item and item.selected:
-                    self.set_selected_item(item)
+                    self.select_item(item)
                     break
     
     def draw(self, surface: pygame.Surface):

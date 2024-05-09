@@ -1,5 +1,5 @@
-from library.font import *
-from library.sheet import *
+from library.font import Font
+from library.sheet import Sheet
 
 font_chars = " abcdefghijklmnopqrstuvwxyz" +\
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +\

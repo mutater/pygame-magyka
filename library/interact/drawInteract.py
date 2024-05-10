@@ -1,5 +1,5 @@
 from library.common import *
-from library.draw import Draw, DrawValue, DrawsValue
+from library.draw import Draw, DrawValue, DrawValueOrList
 from . import Interact
 
 class DrawInteract(Interact):
@@ -16,21 +16,21 @@ class DrawInteract(Interact):
 
     # Getters / Setters
 
-    def on_enabled(self):
-        super().on_enabled()
+    def _on_enabled(self):
+        super()._on_enabled()
         self.color = self.color_normal if self.selected else self.color_normal
     
-    def on_disabled(self):
-        super().on_disabled()
+    def _on_disabled(self):
+        super()._on_disabled()
         self.color = self.color_disabled
 
-    def on_pressed(self):
-        super().on_pressed()
+    def _on_pressed(self):
+        super()._on_pressed()
         if self.enabled:
             self.color = self.color_pressed
     
-    def on_released(self):
-        super().on_released()
+    def _on_released(self):
+        super()._on_released()
         if self.enabled:
             if self.selected:
                 self.color = self.color_selected
@@ -39,40 +39,37 @@ class DrawInteract(Interact):
             else:
                 self.color = self.color_normal
     
-    def on_selected(self):
-        super().on_selected()
+    def _on_selected(self):
+        super()._on_selected()
         if self.enabled and not self.pressed:
             self.color = self.color_selected
     
-    def on_unselected(self):
-        super().on_unselected()
+    def _on_unselected(self):
+        super()._on_unselected()
         if self.enabled and not self.pressed and not self.highlighted:
             self.color = self.color_normal
 
-    def on_highlighted(self):
-        super().on_highlighted()
+    def _on_highlighted(self):
+        super()._on_highlighted()
         if self.enabled and not self.pressed:
             self.color = self.color_highlighted
         
-    def on_unhighlighted(self):
-        super().on_unhighlighted()
+    def _on_unhighlighted(self):
+        super()._on_unhighlighted()
         if self.enabled and not self.pressed and not self.selected:
             self.color = self.color_normal
     
     # Methods
 
-    def add_draw(self, draw: DrawValue):
-        if isinstance(draw, tuple):
-            draw = Draw(draw[0], draw[1])
-
-        self.draws.append(draw)
-    
-    def add_draws(self, draws: DrawsValue):
+    def add_draw(self, draws: DrawValue | List[DrawValue]):
         if not isinstance(draws, list):
             draws = [draws]
-
+        
         for draw in draws:
-            self.add_draw(draw)
+            if isinstance(draw, tuple):
+                draw = Draw(draw[0], draw[1])
+
+            self.draws.append(draw)
     
     def clear_draws(self):
         self.draws.clear()

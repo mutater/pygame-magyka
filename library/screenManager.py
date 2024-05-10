@@ -1,19 +1,30 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from library.gameManager import GameManager
-    from library.gameState import GameState
     from library.screen import Screen
 
 from library.common import *
 
+from library.gameManager import GameManager
+from library.gameState import GameState
+
 class ScreenManager:
-    def __init__(self, gm: GameManager, gs: GameState):
+    def __init__(self):
         self.top: Screen | None = None
-        self.gm = gm
-        self.gs = gs
+        self.gm = GameManager()
+        self.gs = GameState()
         self.break_flag = False
+
+        self.window = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
     
+    def toggle_fullscreen(self):
+        if self.window.get_flags() & pygame.FULLSCREEN:
+            self.window = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
+        else:
+            pygame.display.quit()
+            pygame.display.init()
+            self.window = pygame.display.set_mode((0, 0), pygame.NOFRAME | pygame.FULLSCREEN)
+
     def push(self, Screen: Type[Screen]):
         screen = Screen(self.gm, self.gs, self, Screen.name)
 
@@ -41,7 +52,7 @@ class ScreenManager:
     def peek(self) -> Screen | None:
         return self.top
     
-    def loop(self, screen: pygame.Surface):
+    def loop(self):
         if self.top == None:
             raise Exception("No screen has been pushed yet.")
 
@@ -58,13 +69,16 @@ class ScreenManager:
                     elif event.type == pygame.MOUSEMOTION:
                         pygame.mouse.set_visible(True)
                     elif event.type == pygame.KEYDOWN:
-                        pygame.mouse.set_visible(False)
+                        if event.key == pygame.K_F11:
+                            self.toggle_fullscreen()
+                        elif event.key == pygame.K_RETURN and event.mod & pygame.KMOD_ALT:
+                            self.toggle_fullscreen()
 
                 current.update(events)
 
-                screen.fill("#080f18")
+                self.window.fill("#080f18")
 
-                current.draw(screen)
+                current.draw(self.window)
                 
                 pygame.display.flip()
 

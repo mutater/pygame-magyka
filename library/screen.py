@@ -23,5 +23,5 @@ class Screen:
     def update(self, events: List[pygame.event.Event]):
         pass
 
-    def draw(self, screen: pygame.Surface):
+    def draw(self, window: pygame.Surface):
         pass

@@ -19,44 +19,59 @@ class Group(DrawInteract):
 
         self.selected = True
     
-    def on_selected(self):
-        super().on_selected()
+    def _on_selected(self):
+        super()._on_selected()
         self.select_first()
 
-    def on_unselected(self):
-        super().on_unselected()
+    def _on_unselected(self):
+        super()._on_unselected()
         self.unselect_all_but(None)
+    
+    def add_interact(self, interacts: Interact | List[Interact]) -> Self:
+        if not isinstance(interacts, list):
+            interacts = [interacts]
+        
+        for interact in interacts:
+            self.interacts.append(interact)
 
-    def add_interacts(self, interacts: List[Interact]):
+        return self
+
+    def add_item(self, interacts: Interact | List[Interact]) -> Self:
+        if not isinstance(interacts, list):
+            interacts = [interacts]
+
         for interact in interacts:
             self.add_interact(interact)
-    
-    def add_interact(self, interact: Interact):
-        self.interacts.append(interact)
-
-    def add_items(self, interacts: List[Interact]):
-        for interact in interacts:
-            self.add_item(interact)
-
-    def add_item(self, interact: Interact):
-        self.add_interact(interact)
-        self.items.append(interact)
-        
-        if self.first_item == None or self.last_item == None:
-            self.first_item = interact
+            self.items.append(interact)
+            
+            if self.first_item == None or self.last_item == None:
+                self.first_item = interact
+                self.last_item = interact
+            
+            interact.next = self.first_item
+            interact.prev = self.last_item
+            
+            self.last_item.next = interact
+            self.first_item.prev = interact
             self.last_item = interact
-        
-        interact.next = self.first_item
-        interact.prev = self.last_item
-        
-        self.last_item.next = interact
-        self.first_item.prev = interact
-        self.last_item = interact
+
+        return self
     
+    def select_item(self, item: Interact | None):
+        if self.selected_item != None:
+            self.selected_item.selected = False
+        
+        if item != None:
+            item.selected = True
+        
+        self.selected_item = item
+
     def select_next(self, event: pygame.event.Event):
+        pygame.mouse.set_visible(False)
         self.select_item(self.first_item if self.selected_item == None else self.selected_item.next)
     
     def select_prev(self, event: pygame.event.Event):
+        pygame.mouse.set_visible(False)
         self.select_item(self.last_item if self.selected_item == None else self.selected_item.prev)
     
     def select_first(self):
@@ -67,15 +82,6 @@ class Group(DrawInteract):
         for i in self.items:
             if i != item:
                 i.selected = False
-
-    def select_item(self, item: Interact | None):
-        if self.selected_item != None:
-            self.selected_item.selected = False
-        
-        if item != None:
-            item.selected = True
-        
-        self.selected_item = item
 
     def on_event(self, event: pygame.event.Event):
         if not self.enabled:

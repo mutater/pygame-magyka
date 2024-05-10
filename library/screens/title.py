@@ -48,10 +48,10 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
     def update(self, events: List[pygame.event.Event]):
         self.buttons.update(events)
 
-    def draw(self, screen: pygame.Surface):
-        self.title_text.draw(screen)
+    def draw(self, window: pygame.Surface):
+        self.title_text.draw(window)
 
-        self.buttons.draw(screen)
+        self.buttons.draw(window)
     
     # Callbacks
 

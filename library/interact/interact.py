@@ -5,49 +5,75 @@ class EventCallback(Protocol):
     def __call__(self, event: pygame.event.Event) -> None:
         pass
 
-EventCallbackValue = EventCallback | List[EventCallback]
+EventCallbackOrList = EventCallback | List[EventCallback]
 
 class Action:
-    def __init__(self, callbacks: EventCallbackValue, modifiers: List[int] = []):
-        self.is_pressed = False
+    def __init__(self, callbacks: EventCallbackOrList, mods: IntOrList = []):
+        self.pressed = False
         self._callbacks: List[EventCallback] = []
-        self.modifiers: List[int] = []
+
+        if not isinstance(mods, list):
+            self.mods: List[int] = [mods]
+        else:
+            self.mods = mods
 
         if not isinstance(callbacks, list):
             self._callbacks = [callbacks]
         else:
             self._callbacks = callbacks
     
-    def add_modifiers(self, modifiers: int | List[int]):
-        if not isinstance(modifiers, list):
-            modifiers = [modifiers]
+    def add_mods(self, mods: IntOrList) -> Self:
+        if not isinstance(mods, list):
+            mods = [mods]
 
-        for modifier in modifiers:
-            self.modifiers.append(modifier)
+        for modifier in mods:
+            self.mods.append(modifier)
 
-    def modifiers_pressed(self):
-        if len(self.modifiers) == 0:
+        return self
+
+    def has_mods(self) -> bool:
+        return len(self.mods) > 0
+
+    def mods_pressed(self):
+        if not self.has_mods():
             return True
         
-        keys = pygame.key.get_pressed()
-        for modifier in self.modifiers:
-            if modifier not in keys:
+        mods = pygame.key.get_mods()
+        for mod in self.mods:
+            if not mods & mod:
+                return False
+        
+        return True
+
+    def exact_mods_pressed(self):
+        mods = pygame.key.get_mods()
+        for mod in self.mods:
+            if not mods & mod:
+                return False
+        
+        for mod in [pygame.KMOD_CTRL, pygame.KMOD_ALT, pygame.KMOD_SHIFT]:
+            if mods & mod and mod not in self.mods:
                 return False
         
         return True
 
     def callbacks(self, event: pygame.event.Event):
-        if self.modifiers_pressed:
+        if self.mods_pressed:
             for callback in self._callbacks:
                 callback(event)
+            
+            self.pressed = False
     
-    def add_callbacks(self, callbacks: EventCallbackValue):
+    def add_callbacks(self, callbacks: EventCallbackOrList) -> Self:
         if not isinstance(callbacks, list):
             callbacks = [callbacks]
         
         for callback in callbacks:
             self._callbacks.append(callback)
         
+        return self
+
+_ActionDict = Dict[int, List[Action]]
 
 class Interact:
     def __init__(self):
@@ -61,8 +87,8 @@ class Interact:
         self._selected = False
         self._highlighted = False
 
-        self.keyActions: Dict[int, Action] = {}
-        self.buttonActions: Dict[int, Action] = {}
+        self._key_actions: _ActionDict = {}
+        self._button_actions: _ActionDict = {}
     
     # Getters / Setters
 
@@ -73,14 +99,14 @@ class Interact:
     @enabled.setter
     def enabled(self, value: bool):
         if self._enabled != value:
-            self.on_enabled() if value else self.on_disabled()
+            self._on_enabled() if value else self._on_disabled()
 
         self._enabled = value
     
-    def on_enabled(self):
+    def _on_enabled(self):
         pass
     
-    def on_disabled(self):
+    def _on_disabled(self):
         self.pressed = False
         self.selected = False
         self.highlighted = False
@@ -92,14 +118,14 @@ class Interact:
     @pressed.setter
     def pressed(self, value: bool):
         if self._pressed != value:
-            self.on_pressed() if value else self.on_released()
+            self._on_pressed() if value else self._on_released()
         
         self._pressed = value
 
-    def on_pressed(self):
+    def _on_pressed(self):
         pass
     
-    def on_released(self):
+    def _on_released(self):
         pass
 
     @property
@@ -109,14 +135,14 @@ class Interact:
     @selected.setter
     def selected(self, value: bool):
         if self._selected != value:
-            self.on_selected() if value else self.on_unselected()
+            self._on_selected() if value else self._on_unselected()
         
         self._selected = value
 
-    def on_selected(self):
+    def _on_selected(self):
         pass
     
-    def on_unselected(self):
+    def _on_unselected(self):
         pass
 
     @property
@@ -126,81 +152,90 @@ class Interact:
     @highlighted.setter
     def highlighted(self, value: bool):
         if self._highlighted != value:
-            self.on_highlighted() if value else self.on_unhighlighted()
+            self._on_highlighted() if value else self._on_unhighlighted()
         
         self._highlighted = value
     
-    def on_highlighted(self):
+    def _on_highlighted(self):
         pass
         
-    def on_unhighlighted(self):
+    def _on_unhighlighted(self):
         pass
 
     # Methods
 
-    def add_key(self, key: int, callbacks: EventCallbackValue, modifiers: int | List[int] = []):
-        if key in self.keyActions:
-            self.keyActions[key].add_callbacks(callbacks)
+    def _add_actions(self, action_code: int, action_dict: _ActionDict, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
+        if action_code in action_dict:
+            action_dict[action_code].append(Action(callbacks, mods))
         else:
-            self.keyActions[key] = Action(callbacks)
+            action_dict[action_code] = [Action(callbacks, mods)]
         
-        self.keyActions[key].add_modifiers(modifiers)
+        return self
 
-    def add_keys(self, keys: List[int], callbacks: EventCallbackValue):
+    def add_key(self, keys: IntOrList, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
+        if not isinstance(keys, list):
+            keys = [keys]
+        
         for key in keys:
-            self.add_key(key, callbacks)
+            self._add_actions(key, self._key_actions, callbacks, mods)
+
+        return self
 
     def clear_keys(self):
-        self.keyActions.clear()
+        self._key_actions.clear()
 
-    def add_button(self, button: int, callbacks: EventCallbackValue):
-        if button in self.buttonActions:
-            self.buttonActions[button].add_callbacks(callbacks)
-        else:
-            self.buttonActions[button] = Action(callbacks)
-    
-    def add_buttons(self, buttons: List[int], callbacks: EventCallbackValue):
+    def add_button(self, buttons: IntOrList, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
+        if not isinstance(buttons, list):
+            buttons = [buttons]
+        
         for button in buttons:
-            self.add_button(button, callbacks)
+            self._add_actions(button, self._button_actions, callbacks, mods)
+
+        return self
 
     def clear_buttons(self):
-        self.buttonActions.clear()
-
-    def clear_pressed(self):
-        for _, action in self.keyActions.items():
-            action.is_pressed = False
-        
-        for _, action in self.buttonActions.items():
-            action.is_pressed = False
-        
-        self.pressed = False
+        self._button_actions.clear()
 
     def on_key_event(self, event: pygame.event.Event):
         if event.type != pygame.KEYDOWN:
             return
 
-        if event.key not in self.keyActions:
+        if event.key not in self._key_actions:
             return
 
-        self.keyActions[event.key].callbacks(event)
+        for action in self._key_actions[event.key]:
+            if action.exact_mods_pressed():
+                action.callbacks(event)
     
     def on_button_event(self, event: pygame.event.Event):
         if event.type != pygame.MOUSEBUTTONDOWN and event.type != pygame.MOUSEBUTTONUP:
             return
         
-        if event.button not in self.buttonActions:
+        if event.button not in self._button_actions:
             return
         
-        action = self.buttonActions[event.button]
-
         if event.type == pygame.MOUSEBUTTONDOWN:
-            action.is_pressed = True
+            modifier_found = False
+
+            for action in self._button_actions[event.button]:
+                if action.mods_pressed():
+                    action.pressed = True
+
+                    if action.has_mods():
+                        for other_action in self._button_actions[event.button]:
+                            if other_action != action:
+                                other_action.pressed = False
+                        break
+            
             self.pressed = True
         
-        elif action.is_pressed:
-            self.clear_pressed()
+        else:
             if self.rect.collidepoint(event.pos):
-                action.callbacks(event)
+                for action in self._button_actions[event.button]:
+                    if action.pressed:
+                        action.callbacks(event)
+            
+            self.pressed = False
 
     def on_event(self, event: pygame.event.Event):
         if not self.enabled:

@@ -1,5 +1,7 @@
-from typing import Union, Tuple, List, Dict, Sequence, Protocol, Callable, Optional, Literal, Type
+from typing import Union, Tuple, List, Dict, Sequence, Protocol, Callable, Optional, Literal, Type, Self, TypeVar, TypeAlias
+import math
 import pygame
+import random
 
 Coordinate = Union[Tuple[float, float], Sequence[float], pygame.Vector2]
 
@@ -18,6 +20,8 @@ RectValue = Union[_CanBeRect, _HasRectAttribute]
 
 RGBColorValue = Union[pygame.Color, Tuple[int, int, int]]
 ColorValue = Union[RGBColorValue, str, Sequence[int]]
+
+IntOrList = Union[int, List[int]]
 
 def replace_color(source: pygame.Surface, old: ColorValue, new: ColorValue):
     if not isinstance(old, pygame.Color):
@@ -48,3 +52,21 @@ def to_list(var) -> List:
 
 def add_coords(coord_a: Coordinate, coord_b: Coordinate) -> Coordinate:
     return (coord_a[0] + coord_b[0], coord_a[1] + coord_b[1])
+
+def rand(low: float | Tuple[float, float], high: float | None = None, places: int = -1) -> float:
+    if isinstance(low, tuple):
+        low, high = low[0], low[1]
+    
+    if high != None:
+        if low == high:
+            return low
+        elif low > high:
+            low, high = high, low
+    else:
+        low, high = 0, low
+
+    number = low + (high - low) * random.random()
+    if places:
+        number = round(number, places)
+    
+    return number

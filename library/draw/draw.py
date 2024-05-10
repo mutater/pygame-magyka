@@ -44,4 +44,4 @@ class Draw:
         surface.blit(self.draw_surface, self.rect.topleft)
 
 DrawValue = Tuple[Coordinate, pygame.Surface] | Draw
-DrawsValue = DrawValue | List[DrawValue]
+DrawValueOrList = DrawValue | List[DrawValue]

@@ -2,8 +2,8 @@ from library.common import *
 from library.constant.fonts import *
 from library.screen import Screen
 
-import library.interact as interact
-import library.draw as draw
+import library.ui.interact as interact
+import library.ui.draw as draw
 
 class Title(Screen):
     name = "title"
@@ -31,7 +31,7 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
         for i in range(len(title_string_split)):
             new_title_string += f"/c[{to_hex((25, 50 + i * 5, 250 - i * 5))}]{title_string_split[i]}\n"
         
-        self.title_text = fonts.text(new_title_string, (umx, umy))
+        self.title_text = draw.Text(fonts, new_title_string, (umx, umy))
 
         # interacts
 
@@ -45,18 +45,18 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
 
         self.buttons.selected = True
 
-    def update(self, events: List[pygame.event.Event]):
-        self.buttons.update(events)
+    def update(self, dt: float, events: list[Event]):
+        self.buttons.update(dt, events)
 
-    def draw(self, window: pygame.Surface):
+    def draw(self, window: Surface):
         self.title_text.draw(window)
 
         self.buttons.draw(window)
     
     # Callbacks
 
-    def print(self, event: pygame.event.Event):
+    def print(self, event: Event):
         print("hello")
     
-    def quit(self, event: pygame.event.Event):
+    def quit(self, event: Event):
         self.sm.break_flag = True

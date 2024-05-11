@@ -1,17 +1,17 @@
 import math
 import re
-from typing import List, Dict
 
 from library.common import *
-from library.draw import Draw
-from library.sheet import *
+
+from . import Sheet
+from . import Draw
 
 class Font:
-    def __init__(self, char_sheet: Sheet, chars: str, icon_sheet: Sheet, icons: List[str]):
+    def __init__(self, char_sheet: Sheet, chars: str, icon_sheet: Sheet, icons: list[str]):
         self.char_sheet: Sheet = char_sheet
         self.icon_sheet: Sheet = icon_sheet
-        self.chars: Dict[str, int] = {chars[i]: i for i in range(len(chars))}
-        self.icons: Dict[str, int] = {icons[i]: i for i in range(len(icons))}
+        self.chars: dict[str, int] = {chars[i]: i for i in range(len(chars))}
+        self.icons: dict[str, int] = {icons[i]: i for i in range(len(icons))}
 
         if char_sheet.size != icon_sheet.size:
             raise ValueError("Sheet sprite sizes do not match.")
@@ -20,29 +20,29 @@ class Font:
         self.width = self.size[0]
         self.height = self.size[1]
     
-    def text(self, string: str, dest: Coordinate) -> Draw:
+    def text(self, string: str) -> Surface:
         if len(string) == 0:
-            return Draw(dest, (1, 1))
+            return Surface((0, 0), pygame.SRCALPHA)
 
         # Splitting strings by newlines
         
         if "\n" in string:
-            texts = [self.text(s, dest) for s in string.split("\n")]
-            width = max([t.get_width() for t in texts])
-            height = len(texts) * self.height
-            text = Draw(dest, (width, height))
+            surfaces = [self.text(line) for line in string.split("\n")]
+            width = max([surface.get_width() for surface in surfaces])
+            height = len(surfaces) * self.height
+            surface = Surface((width, height), pygame.SRCALPHA)
 
-            for i in range(len(texts)):
-                text.blit(texts[i].surface, (0, i * self.height))
+            for i in range(len(surfaces)):
+                surface.blit(surfaces[i], (0, i * self.height))
             
-            return text
+            return surface
         
         # Parse string for icons etc
 
         pattern = re.compile(r"/([ic])\[([^\]]+)\]")
         
-        surfaces: List[pygame.Surface] = []
-        colors: Dict[int, ColorValue] = {}
+        surfaces: list[Surface] = []
+        colors: dict[int, ColorValue] = {}
         
         i = 0
         c = 0
@@ -67,15 +67,15 @@ class Font:
             
             c += 1
 
-        # Get the dimensions of the new text object
+        # Get the dimensions of the new surface
 
         width = len(surfaces) * self.width
         height = math.ceil(len(surfaces) * self.width / width) * self.height
         cols = width / self.width
 
-        # Create the new text object and blit the characters
+        # Create the new surface and blit the characters
 
-        text = Draw(dest, (width, height))
+        surface = Surface((width, height), pygame.SRCALPHA)
         color = "white"
 
         for i in range(len(surfaces)):
@@ -89,6 +89,6 @@ class Font:
 
             x = (i % cols) * self.width
             y = math.floor(i / cols) * self.height
-            text.blit(char_surface, (x, y))
+            surface.blit(char_surface, (x, y))
         
-        return text
+        return surface

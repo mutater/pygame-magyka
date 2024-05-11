@@ -20,8 +20,8 @@ class Screen:
     def start(self):
         pass
 
-    def update(self, events: List[pygame.event.Event]):
+    def update(self, dt: float, events: list[Event]):
         pass
 
-    def draw(self, window: pygame.Surface):
+    def draw(self, window: Surface):
         pass

@@ -1,32 +1,22 @@
 from library.common import *
-from library.draw.draw import Draw
 
 class EventCallback(Protocol):
-    def __call__(self, event: pygame.event.Event) -> None:
+    def __call__(self, event: Event) -> None:
         pass
 
-EventCallbackOrList = EventCallback | List[EventCallback]
+EventCallbackOrList = EventCallback | list[EventCallback]
 
 class Action:
     def __init__(self, callbacks: EventCallbackOrList, mods: IntOrList = []):
         self.pressed = False
-        self._callbacks: List[EventCallback] = []
+        self._callbacks: list[EventCallback] = []
 
-        if not isinstance(mods, list):
-            self.mods: List[int] = [mods]
-        else:
-            self.mods = mods
+        self.mods = to_list(mods)
 
-        if not isinstance(callbacks, list):
-            self._callbacks = [callbacks]
-        else:
-            self._callbacks = callbacks
+        self._callbacks = to_list(callbacks)
     
     def add_mods(self, mods: IntOrList) -> Self:
-        if not isinstance(mods, list):
-            mods = [mods]
-
-        for modifier in mods:
+        for modifier in to_list(mods):
             self.mods.append(modifier)
 
         return self
@@ -57,7 +47,7 @@ class Action:
         
         return True
 
-    def callbacks(self, event: pygame.event.Event):
+    def callbacks(self, event: Event):
         if self.mods_pressed:
             for callback in self._callbacks:
                 callback(event)
@@ -65,15 +55,12 @@ class Action:
             self.pressed = False
     
     def add_callbacks(self, callbacks: EventCallbackOrList) -> Self:
-        if not isinstance(callbacks, list):
-            callbacks = [callbacks]
-        
-        for callback in callbacks:
+        for callback in to_list(callbacks):
             self._callbacks.append(callback)
         
         return self
 
-_ActionDict = Dict[int, List[Action]]
+_ActionDict = dict[int, list[Action]]
 
 class Interact:
     def __init__(self):
@@ -173,10 +160,7 @@ class Interact:
         return self
 
     def add_key(self, keys: IntOrList, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
-        if not isinstance(keys, list):
-            keys = [keys]
-        
-        for key in keys:
+        for key in to_list(keys):
             self._add_actions(key, self._key_actions, callbacks, mods)
 
         return self
@@ -185,10 +169,7 @@ class Interact:
         self._key_actions.clear()
 
     def add_button(self, buttons: IntOrList, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
-        if not isinstance(buttons, list):
-            buttons = [buttons]
-        
-        for button in buttons:
+        for button in to_list(buttons):
             self._add_actions(button, self._button_actions, callbacks, mods)
 
         return self
@@ -196,7 +177,7 @@ class Interact:
     def clear_buttons(self):
         self._button_actions.clear()
 
-    def on_key_event(self, event: pygame.event.Event):
+    def on_key_event(self, event: Event):
         if event.type != pygame.KEYDOWN:
             return
 
@@ -207,7 +188,7 @@ class Interact:
             if action.exact_mods_pressed():
                 action.callbacks(event)
     
-    def on_button_event(self, event: pygame.event.Event):
+    def on_button_event(self, event: Event):
         if event.type != pygame.MOUSEBUTTONDOWN and event.type != pygame.MOUSEBUTTONUP:
             return
         
@@ -237,7 +218,7 @@ class Interact:
             
             self.pressed = False
 
-    def on_event(self, event: pygame.event.Event):
+    def on_event(self, event: Event):
         if not self.enabled:
             return
         
@@ -250,6 +231,6 @@ class Interact:
         if self.highlighted:
             self.on_button_event(event)
     
-    def update(self, events: List[pygame.event.Event]):
+    def update(self, dt: float, events: list[Event]):
         for event in events:
             self.on_event(event)

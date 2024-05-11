@@ -1,29 +1,25 @@
-from typing import Union, Tuple, List, Dict, Sequence, Protocol, Callable, Optional, Literal, Type, Self, TypeVar, TypeAlias
+from typing import Protocol, Callable, Optional, Literal, Type, Self, TypeVar, TypeAlias, overload
 import math
 import pygame
 import random
 
-Coordinate = Union[Tuple[float, float], Sequence[float], pygame.Vector2]
+Coordinate = tuple[float, float]
 
-_CanBeRect = Union[
-    pygame.Rect,
-    Tuple[Union[float, int], Union[float, int], Union[float, int], Union[float, int]],
-    Tuple[Coordinate, Coordinate],
-    Sequence[Union[float, int]],
-    Sequence[Coordinate],
-]
+_CanBeRect = pygame.Rect | tuple[float, float, float, float] | tuple[Coordinate, Coordinate]
 
 class _HasRectAttribute(Protocol):
-    rect: Union[_CanBeRect, Callable[[], _CanBeRect]]
+    rect: _CanBeRect | Callable[[], _CanBeRect]
 
-RectValue = Union[_CanBeRect, _HasRectAttribute]
+RectValue = _CanBeRect | _HasRectAttribute
 
-RGBColorValue = Union[pygame.Color, Tuple[int, int, int]]
-ColorValue = Union[RGBColorValue, str, Sequence[int]]
+ColorValue = pygame.Color | tuple[int, int, int] | str
 
-IntOrList = Union[int, List[int]]
+IntOrList = int | list[int]
 
-def replace_color(source: pygame.Surface, old: ColorValue, new: ColorValue):
+Event = pygame.event.Event
+Surface = pygame.Surface
+
+def replace_color(source: Surface, old: ColorValue, new: ColorValue):
     if not isinstance(old, pygame.Color):
         try:
             old = pygame.Color(old)
@@ -47,13 +43,10 @@ def to_hex(color: ColorValue):
     
     return f"#{color.r:02X}{color.g:02X}{color.b:02X}"
 
-def to_list(var) -> List:
-    return var if type(var) is list else [var]
-
 def add_coords(coord_a: Coordinate, coord_b: Coordinate) -> Coordinate:
     return (coord_a[0] + coord_b[0], coord_a[1] + coord_b[1])
 
-def rand(low: float | Tuple[float, float], high: float | None = None, places: int = -1) -> float:
+def rand(low: float | tuple[float, float], high: float | None = None, places: int = -1) -> float:
     if isinstance(low, tuple):
         low, high = low[0], low[1]
     
@@ -70,3 +63,10 @@ def rand(low: float | Tuple[float, float], high: float | None = None, places: in
         number = round(number, places)
     
     return number
+
+T = TypeVar('T')
+def to_list(value: T | list[T]) -> list[T]:
+    if not isinstance(value, list):
+        return [value]
+    else:
+        return value

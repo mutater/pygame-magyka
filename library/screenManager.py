@@ -13,7 +13,9 @@ class ScreenManager:
         self.top: Screen | None = None
         self.gm = GameManager()
         self.gs = GameState()
+
         self.break_flag = False
+        self.console_flag = False
 
         self.window = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
     
@@ -74,7 +76,7 @@ class ScreenManager:
                         elif event.key == pygame.K_RETURN and event.mod & pygame.KMOD_ALT:
                             self.toggle_fullscreen()
 
-                current.update(events)
+                current.update(self.gm.time.dt, events)
 
                 self.window.fill("#080f18")
 

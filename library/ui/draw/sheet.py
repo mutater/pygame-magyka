@@ -19,7 +19,7 @@ class Sheet:
                 y = row * (size[1] + padding[1] * 2) + padding[1]
                 self.sprites.append(image.subsurface((x, y, size[0], size[1])))
     
-    def sprite(self, i: int) -> pygame.Surface:
+    def sprite(self, i: int) -> Surface:
         if i >= len(self.sprites):
             i = 0
         

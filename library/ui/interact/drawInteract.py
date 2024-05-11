@@ -1,5 +1,6 @@
 from library.common import *
-from library.draw import Draw, DrawValue, DrawValueOrList
+
+from ..draw import Draw, DrawOrList
 from . import Interact
 
 class DrawInteract(Interact):
@@ -12,7 +13,7 @@ class DrawInteract(Interact):
         self.color_highlighted = self.color_selected
         self.color_pressed = pygame.Color("#8899AA")
 
-        self.draws: List[Draw] = []
+        self.draws: list[Draw] = []
 
     # Getters / Setters
 
@@ -61,15 +62,15 @@ class DrawInteract(Interact):
     
     # Methods
 
-    def add_draw(self, draws: DrawValue | List[DrawValue]):
-        if not isinstance(draws, list):
-            draws = [draws]
-        
-        for draw in draws:
+    def add_draw(self, draws: DrawOrList, offset: Coordinate | None = None):
+        for draw in to_list(draws):
             if isinstance(draw, tuple):
                 draw = Draw(draw[0], draw[1])
 
-            self.draws.append(draw)
+            if offset != None:
+                self.draws.append(draw.move(offset))
+            else:
+                self.draws.append(draw)
     
     def clear_draws(self):
         self.draws.clear()
@@ -100,6 +101,8 @@ class DrawInteract(Interact):
         
         return pygame.Rect(left, top, width, height)
     
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: Surface):
+        self.set_draws_color(self.color)
+
         for draw in self.draws:
             draw.draw(surface)

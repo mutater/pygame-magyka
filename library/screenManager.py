@@ -1,21 +1,21 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from library.screen import Screen
+    from .screen import Screen
 
-from library.common import *
-
-from library.gameManager import GameManager
-from library.gameState import GameState
+from .common import *
+from .gameManager import GameManager
 
 class ScreenManager:
-    def __init__(self):
+    def __init__(self, gm: GameManager):
         self.top: Screen | None = None
-        self.gm = GameManager()
-        self.gs = GameState()
+        self.gm = gm
 
         self.break_flag = False
         self.console_flag = False
+
+        self.clock = pygame.time.Clock()
+        self.dt = 0
 
         self.window = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
     
@@ -28,7 +28,7 @@ class ScreenManager:
             self.window = pygame.display.set_mode((0, 0), pygame.NOFRAME | pygame.FULLSCREEN)
 
     def push(self, Screen: Type[Screen]):
-        screen = Screen(self.gm, self.gs, self, Screen.name)
+        screen = Screen(self.gm, self, Screen.name)
 
         screen.next = self.top
         self.top = screen
@@ -76,7 +76,7 @@ class ScreenManager:
                         elif event.key == pygame.K_RETURN and event.mod & pygame.KMOD_ALT:
                             self.toggle_fullscreen()
 
-                current.update(self.gm.time.dt, events)
+                current.update(self.dt, events)
 
                 self.window.fill("#080f18")
 
@@ -84,4 +84,4 @@ class ScreenManager:
                 
                 pygame.display.flip()
 
-                self.gm.time.tick()
+                self.dt = self.clock.tick(60) / 1000

@@ -76,3 +76,13 @@ def to_int(value: tuple[float, float]) -> tuple[int, int]:
 
 def str_remove_at(string: str, i: int) -> str:
     return string[:i] + string[i + 1:]
+
+def clamp(value: float, low: float, high: float) -> float:
+    return max(min(value, high), low)
+
+def cmd_color(color: ColorValue) -> str:
+    color = pygame.Color(color)
+    return f"/c[{to_hex(color)}]"
+
+def cmd_icon(icon: str) -> str:
+    return f"/i[{icon}]"

@@ -1,5 +1,4 @@
-from library.ui.draw import Font
-from library.ui.draw import Sheet
+from ..draw import Font, Sheet
 
 charset_alphabetic = "abcdefghijklmnopqrstuvwxyz" + "abcdefghijklmnopqrstuvwxyz".upper()
 charset_numeric = "0123456789"

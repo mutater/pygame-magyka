@@ -1,4 +1,4 @@
-from library.common import *
+from ..common import *
 from ..draw import Draw, DrawOrList
 
 from . import DrawInteract, EventCallbackOrList

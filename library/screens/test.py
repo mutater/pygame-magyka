@@ -1,19 +1,21 @@
-from library.common import *
-from library.constant.fonts import *
-from library.screen import Screen
-
-import library.ui.draw as draw
-import library.ui.interact as interact
+from ..screen import *
 
 class Test(Screen):
     def start(self):
-        self.form = interact.Form()
+        self.entity = entity.Entity()
+        self.entity.add_component(component.Health())
+        self.entity.health.percent = 50
+        print(self.entity.health)
+        self.bar = draw.Bar(fontm, self.entity.health, 32, (umx, umy * 7), color_filled="red")
+
+        self.form = ui.Form()
         self.form.add_draw([
             draw.Text(fonts, "Sphinx of black quartz, judge my vow.", (umx, umy)),
             draw.Text(fontm, "Sphinx of black quartz, judge my vow.", (umx, umy * 2)),
-            draw.Text(fontl, "Sphinx of black quartz, judge my vow.", (umx, umy * 3))
+            draw.Text(fontl, "Sphinx of black quartz, judge my vow.", (umx, umy * 3)),
+            self.bar
         ])
-        self.textbox = interact.Textbox((umx, umy * 5), fontm, 32, "abcd efgh [[[[[[]]]]")
+        self.textbox = ui.Textbox((umx, umy * 5), fontm, 32, "abcd efgh [[[[[[]]]]")
         self.form.add_item(self.textbox)
 
     def update(self, dt: float, events: list[Event]):

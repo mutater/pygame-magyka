@@ -1,4 +1,4 @@
-from library.common import *
+from ..common import *
 
 class Draw:
     @overload

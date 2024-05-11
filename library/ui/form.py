@@ -1,4 +1,4 @@
-from library.common import *
+from ..common import *
 from . import Interact, Group
 
 class Form(Group):

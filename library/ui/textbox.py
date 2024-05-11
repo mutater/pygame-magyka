@@ -1,6 +1,6 @@
-from library.common import *
-from library.constant import fonts
-from library.timer import Timer
+from ..common import *
+from ..constant import fonts
+from ..timer import Timer
 
 from . import DrawInteract
 from ..draw import Font, Text
@@ -138,7 +138,7 @@ class Textbox(DrawInteract):
             if event.mod & pygame.KMOD_CTRL:
                 self.index = find_next_index(self.index, direction)
 
-        elif event.unicode != "" and event.unicode in self.charset:
+        elif event.unicode != "" and event.unicode in self.charset and self.length < self.max_chars:
             self.value = self.value[:self.index] + event.unicode + (self.value[self.index:] if self.length > self.index + 1 else "")
             self.index += 1
         else:

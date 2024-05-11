@@ -1,4 +1,4 @@
-from library.common import *
+from ..common import *
 
 class EventCallback(Protocol):
     def __call__(self, event: Event) -> None:

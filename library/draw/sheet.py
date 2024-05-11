@@ -1,7 +1,7 @@
 import pygame
 import math
 
-from library.common import *
+from ..common import *
 
 class Sheet:
     def __init__(self, file: str, size: Coordinate, padding: Coordinate = (0, 0)):

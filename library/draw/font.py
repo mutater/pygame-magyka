@@ -1,7 +1,7 @@
 import math
 import re
 
-from library.common import *
+from ..common import *
 
 from . import Sheet
 from . import Draw

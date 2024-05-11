@@ -1,9 +1,6 @@
-from library.common import *
-from library.constant.fonts import *
-from library.screen import Screen
-
-import library.ui.interact as interact
-import library.ui.draw as draw
+from ..common import *
+from ..constant.fonts import *
+from ..screen import *
 
 class Title(Screen):
     name = "title"
@@ -35,7 +32,7 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
 
         # interacts
 
-        self.buttons = interact.ButtonGroup((umx * 2, umy * 13), fontm, [
+        self.buttons = ui.ButtonGroup((umx * 2, umy * 13), fontm, [
             ("N", "New Game", pygame.K_n, self.print),
             ("C", "Continue", pygame.K_c, self.print),
             ("O", "Options", pygame.K_o, self.print),

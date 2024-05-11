@@ -4,8 +4,10 @@ from ..draw import Draw, DrawOrList
 from . import Interact
 
 class DrawInteract(Interact):
-    def __init__(self):
+    def __init__(self, dest: Coordinate = (0, 0)):
         super().__init__()
+        self.rect.topleft = to_int(dest)
+
         self.color = pygame.Color("white")
         self.color_disabled = pygame.Color("darkgray")
         self.color_normal = pygame.Color("white")

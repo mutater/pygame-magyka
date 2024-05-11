@@ -13,7 +13,7 @@ class Test(Screen):
             draw.Text(fontm, "Sphinx of black quartz, judge my vow.", (umx, umy * 2)),
             draw.Text(fontl, "Sphinx of black quartz, judge my vow.", (umx, umy * 3))
         ])
-        self.textbox = interact.Textbox((umx, umy * 5), fontm, 32)
+        self.textbox = interact.Textbox((umx, umy * 5), fontm, 32, "abcd efgh [[[[[[]]]]")
         self.form.add_item(self.textbox)
 
     def update(self, dt: float, events: list[Event]):

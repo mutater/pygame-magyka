@@ -5,7 +5,7 @@ from . import DrawInteract, EventCallbackOrList
 
 class Button(DrawInteract):
     def __init__(self, dest: Coordinate, draws: DrawOrList, callbacks: EventCallbackOrList, mods: IntOrList = []):
-        super().__init__()
+        super().__init__(dest)
         
         self.add_draw(draws, dest)
 

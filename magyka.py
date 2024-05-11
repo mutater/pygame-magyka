@@ -1,4 +1,4 @@
-import pygame
+from library.common import *
 
 from library.screenManager import ScreenManager
 import library.screens as screens

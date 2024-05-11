@@ -64,7 +64,7 @@ _ActionDict = dict[int, list[Action]]
 
 class Interact:
     def __init__(self):
-        self.rect = pygame.Rect(0, 0, 0, 0)
+        self.rect = pygame.Rect(0.0, 0.0, 0.0, 0.0)
 
         self.next: Interact | None = None
         self.prev: Interact | None = None

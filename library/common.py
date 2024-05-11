@@ -70,3 +70,9 @@ def to_list(value: T | list[T]) -> list[T]:
         return [value]
     else:
         return value
+
+def to_int(value: tuple[float, float]) -> tuple[int, int]:
+    return (math.floor(value[0]), math.floor(value[1]))
+
+def str_remove_at(string: str, i: int) -> str:
+    return string[:i] + string[i + 1:]

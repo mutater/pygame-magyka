@@ -152,6 +152,8 @@ class Textbox(DrawInteract):
         self.value_text.value = self.value
     
     def update(self, dt: float, events: list[Event]):
+        super().update(dt, events)
+
         if self.selected:
             if self.cursor_timer.tick(dt).complete:
                 self.cursor_text.visible = not self.cursor_text.visible

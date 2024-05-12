@@ -34,6 +34,7 @@ class ScreenManager:
         self.top = screen
     
     def pop(self) -> Screen | None:
+        print("popping")
         if self.top == None:
             return
         else:
@@ -51,6 +52,9 @@ class ScreenManager:
         
         return oTop
     
+    def clear(self):
+        self.top = None
+
     def peek(self) -> Screen | None:
         return self.top
     
@@ -65,7 +69,14 @@ class ScreenManager:
             while not self.break_flag and current == self.top:
                 events = pygame.event.get()
 
+                scale = (1, 1)
+                if self.window.get_height() > 1440:
+                    scale = (2, 2)
+
                 for event in events:
+                    if hasattr(event, "pos"):
+                        event.pos = div_coords(event.pos, scale)
+
                     if event.type == pygame.QUIT:
                         return
                     elif event.type == pygame.MOUSEMOTION:
@@ -78,10 +89,13 @@ class ScreenManager:
 
                 current.update(self.dt, events)
 
-                self.window.fill("#080f18")
+                surface = pygame.Surface(div_coords(self.window.get_size(), scale))
+                surface.fill("#080f18")
 
-                current.draw(self.window)
+                current.draw(surface)
                 
+                pygame.transform.scale(surface, self.window.get_size(), self.window)
+
                 pygame.display.flip()
 
                 self.dt = self.clock.tick(60) / 1000

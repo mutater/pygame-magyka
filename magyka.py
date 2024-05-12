@@ -11,7 +11,7 @@ pygame.key.set_repeat(500, 100)
 gm = GameManager()
 
 sm = ScreenManager(gm)
-sm.push(screens.Test)
+sm.push(screens.TitleScreen)
 sm.loop()
 
 pygame.quit()

@@ -1,3 +1,4 @@
+from library.common import Event
 from ..common import *
 from . import Interact, Group
 
@@ -22,7 +23,8 @@ class Form(Group):
                 self.select_prev()
 
         def unselect_all(event: Event):
-            self.unselect_all_but()
+            if self.selected_item == None or self.selected_item.selected == False:
+                self.unselect_all_but()
 
         self.add_key(pygame.K_TAB, select_next)
         self.add_key(pygame.K_TAB, select_prev, pygame.KMOD_SHIFT)

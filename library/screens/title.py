@@ -1,8 +1,7 @@
-from ..common import *
-from ..constant.fonts import *
 from ..screen import *
+from . import *
 
-class Title(Screen):
+class TitleScreen(Screen):
     name = "title"
     
     def start(self):
@@ -20,40 +19,33 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
                                              "8888         88F                           
 ...................................... .d8! . `888 ...... 98" ............................
  ..................................... 4888o.o88" ..... ./" ...............................
-  ..................................... *68889*` ..... -` ..... By Vincent G, aka Mutater .."""
+  ..................................... *68889*` ..... -` ..... By Vincent G, aka mutater ..""".split("\n")
         
-        title_string_split = title_string.split("\n")
         new_title_string = ""
 
-        for i in range(len(title_string_split)):
-            new_title_string += f"/c[{to_hex((25, 50 + i * 5, 250 - i * 5))}]{title_string_split[i]}\n"
+        for i in range(len(title_string)):
+            new_title_string += f"/c[{to_hex((25, 50 + i * 5, 250 - i * 5))}]{title_string[i]}\n"
         
-        self.title_text = draw.Text(fonts, new_title_string, (umx, umy))
+        self.form.add_draw(draw.Text(fontm, new_title_string, (umx, umy)))
 
-        # interacts
-
-        self.buttons = ui.ButtonGroup((umx * 2, umy * 13), fontm, [
-            ("N", "New Game", pygame.K_n, self.print),
-            ("C", "Continue", pygame.K_c, self.print),
-            ("O", "Options", pygame.K_o, self.print),
+        self.form.add_item(ui.ButtonGroup((umx * 2, umy * 17), fontm, [
+            ("N", "New Game", pygame.K_n, self.new_game),
+            ("O", "Options", pygame.K_o, self.options),
             ("H", "Help", pygame.K_h, self.print),
             ("Q", "Quit", pygame.K_q, self.quit)
-        ])
-
-        self.buttons.selected = True
-
-    def update(self, dt: float, events: list[Event]):
-        self.buttons.update(dt, events)
-
-    def draw(self, window: Surface):
-        self.title_text.draw(window)
-
-        self.buttons.draw(window)
+        ]))
     
     # Callbacks
 
     def print(self, event: Event):
         print("hello")
     
+    def new_game(self, event: Event):
+        self.sm.clear()
+        self.sm.push(TestScreen)
+    
+    def options(self, event: Event):
+        self.sm.push(OptionsScreen)
+
     def quit(self, event: Event):
         self.sm.break_flag = True

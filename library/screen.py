@@ -16,12 +16,20 @@ class Screen:
         self.gm = gm
         self.sm = sm
         self.name = name
+
+        self.form = ui.Form()
+        self.form.add_key(pygame.K_ESCAPE, self.back)
+        self.can_back = True
     
     def start(self):
         pass
 
     def update(self, dt: float, events: list[Event]):
-        pass
+        self.form.update(dt, events)
 
     def draw(self, window: Surface):
-        pass
+        self.form.draw(window)
+
+    def back(self, event: Event):
+        if self.can_back and self.form.selected_item == None:
+            self.sm.pop()

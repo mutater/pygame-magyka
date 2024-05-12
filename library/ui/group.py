@@ -86,6 +86,7 @@ class Group(DrawInteract):
         for i in self.items:
             if i != item:
                 i.selected = False
+        self.selected_item = None
 
     def on_event(self, event: Event):
         if not self.enabled:
@@ -96,9 +97,6 @@ class Group(DrawInteract):
 
         if event.type == pygame.MOUSEMOTION:
             self.unselect_all_but(self.selected_item)
-
-        for interact in self.interacts:
-            interact.on_event(event)
 
         if event.type == pygame.MOUSEMOTION:
             for item in self.items:

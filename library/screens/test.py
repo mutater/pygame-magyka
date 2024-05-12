@@ -1,6 +1,6 @@
 from ..screen import *
 
-class Test(Screen):
+class TestScreen(Screen):
     def start(self):
         self.entity = entity.Entity()
         self.entity.add_component(component.Health())

@@ -1,4 +1,4 @@
-from typing import Protocol, Callable, Optional, Literal, Type, Self, TypeVar, TypeAlias, overload
+from typing import Protocol, Callable, Type, Self, TypeVar, overload
 import math
 import pygame
 import random
@@ -45,6 +45,12 @@ def to_hex(color: ColorValue):
 
 def add_coords(coord_a: Coordinate, coord_b: Coordinate) -> Coordinate:
     return (coord_a[0] + coord_b[0], coord_a[1] + coord_b[1])
+
+def mul_coords(coord_a: Coordinate, coord_b: Coordinate) -> Coordinate:
+    return (coord_a[0] * coord_b[0], coord_a[1] * coord_b[1])
+
+def div_coords(coord_a: Coordinate, coord_b: Coordinate) -> Coordinate:
+    return (coord_a[0] / coord_b[0], coord_a[1] / coord_b[1])
 
 def rand(low: float | tuple[float, float], high: float | None = None, places: int = -1) -> float:
     if isinstance(low, tuple):

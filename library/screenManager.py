@@ -34,7 +34,6 @@ class ScreenManager:
         self.top = screen
     
     def pop(self) -> Screen | None:
-        print("popping")
         if self.top == None:
             return
         else:
@@ -86,6 +85,8 @@ class ScreenManager:
                             self.toggle_fullscreen()
                         elif event.key == pygame.K_RETURN and event.mod & pygame.KMOD_ALT:
                             self.toggle_fullscreen()
+                        elif event.key == pygame.K_BACKQUOTE:
+                            self.toggle_console()
 
                 current.update(self.dt, events)
 

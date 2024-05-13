@@ -1,11 +1,10 @@
-from .gameObject import *
+from .entity import *
 
-class Entity(GameObject):
+class Player(Entity):
     def __init__(self):
         super().__init__()
     
     @classmethod
     def new(cls) -> Self:
         gameObject = super().new()
-        gameObject.add_component(Health())
         return gameObject

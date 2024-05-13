@@ -2,10 +2,10 @@ from ..common import *
 
 class Draw:
     @overload
-    def __init__(self, value: Self, /): ...
+    def __init__(self, surface: Coordinate | Surface, dest: Coordinate = (0, 0), /): ...
     
     @overload
-    def __init__(self, surface: Coordinate | Surface, dest: Coordinate = (0, 0), /): ...
+    def __init__(self, value: Self, /): ...
 
     def __init__(self, *args):
         if isinstance(args[0], Draw):
@@ -53,9 +53,14 @@ class Draw:
         return self._color
     
     @color.setter
-    def color(self, color: pygame.Color):
+    def color(self, color: ColorValue):
+        color = pygame.Color(color)
         if self._color != color:
             self._update_color(color)
+    
+    def set_color(self, color: ColorValue) -> Self:
+        self.color = color
+        return self
 
     def get_width(self) -> int:
         return self.surface.get_width()

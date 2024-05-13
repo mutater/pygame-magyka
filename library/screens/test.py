@@ -2,7 +2,7 @@ from ..screen import *
 
 class TestScreen(Screen):
     def start(self):
-        self.entity = entity.Entity()
+        self.entity = entity.GameObject()
         self.entity.add_component(component.Health())
         self.entity.health.percent = 50
         print(self.entity.health)

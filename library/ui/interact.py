@@ -86,18 +86,10 @@ class Interact:
     @enabled.setter
     def enabled(self, value: bool):
         if self._enabled != value:
-            self._on_enabled() if value else self._on_disabled()
+            self._on_enabled(None) if value else self._on_disabled(None)
 
         self._enabled = value
     
-    def _on_enabled(self):
-        pass
-    
-    def _on_disabled(self):
-        self.pressed = False
-        self.selected = False
-        self.highlighted = False
-
     @property
     def pressed(self):
         return self._pressed
@@ -105,16 +97,10 @@ class Interact:
     @pressed.setter
     def pressed(self, value: bool):
         if self._pressed != value:
-            self._on_pressed() if value else self._on_released()
+            self._on_pressed(None) if value else self._on_released(None)
         
         self._pressed = value
-
-    def _on_pressed(self):
-        pass
     
-    def _on_released(self):
-        pass
-
     @property
     def selected(self):
         return self._selected
@@ -122,16 +108,10 @@ class Interact:
     @selected.setter
     def selected(self, value: bool):
         if self._selected != value:
-            self._on_selected() if value else self._on_unselected()
+            self._on_selected(None) if value else self._on_unselected(None)
         
         self._selected = value
-
-    def _on_selected(self):
-        pass
     
-    def _on_unselected(self):
-        pass
-
     @property
     def highlighted(self):
         return self._highlighted
@@ -139,46 +119,40 @@ class Interact:
     @highlighted.setter
     def highlighted(self, value: bool):
         if self._highlighted != value:
-            self._on_highlighted() if value else self._on_unhighlighted()
+            self._on_highlighted(None) if value else self._on_unhighlighted(None)
         
         self._highlighted = value
     
-    def _on_highlighted(self):
+    # Events
+
+    def _on_enabled(self, event: Event):
+        pass
+    
+    def _on_disabled(self, event: Event):
+        self.pressed = False
+        self.selected = False
+        self.highlighted = False
+
+    def _on_pressed(self, event: Event):
+        pass
+    
+    def _on_released(self, event: Event):
+        pass
+
+    def _on_selected(self, event: Event):
+        pass
+    
+    def _on_unselected(self, event: Event):
+        pass
+
+    def _on_highlighted(self, event: Event):
         pass
         
-    def _on_unhighlighted(self):
+    def _on_unhighlighted(self, event: Event):
         pass
 
-    # Methods
-
-    def _add_actions(self, action_code: int, action_dict: _ActionDict, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
-        if action_code in action_dict:
-            action_dict[action_code].append(Action(callbacks, mods))
-        else:
-            action_dict[action_code] = [Action(callbacks, mods)]
-        
-        return self
-
-    def add_key(self, keys: IntOrList, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
-        for key in to_list(keys):
-            self._add_actions(key, self._key_actions, callbacks, mods)
-
-        return self
-
-    def clear_keys(self):
-        self._key_actions.clear()
-
-    def add_button(self, buttons: IntOrList, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
-        for button in to_list(buttons):
-            self._add_actions(button, self._button_actions, callbacks, mods)
-
-        return self
-
-    def clear_buttons(self):
-        self._button_actions.clear()
-
-    def on_key_event(self, event: Event):
-        if event.type != pygame.KEYDOWN:
+    def _on_key_event(self, event: Event):
+        if event == None or event.type != pygame.KEYDOWN:
             return
 
         if event.key not in self._key_actions:
@@ -188,8 +162,8 @@ class Interact:
             if action.exact_mods_pressed():
                 action.callbacks(event)
     
-    def on_button_event(self, event: Event):
-        if event.type != pygame.MOUSEBUTTONDOWN and event.type != pygame.MOUSEBUTTONUP:
+    def _on_button_event(self, event: Event):
+        if event == None or event.type not in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]:
             return
         
         if event.button not in self._button_actions:
@@ -218,19 +192,47 @@ class Interact:
             
             self.pressed = False
 
-    def on_event(self, event: Event):
-        if not self.enabled:
+    def _on_event(self, event: Event):
+        if not self.enabled or event == None:
             return
         
         if event.type == pygame.MOUSEMOTION:
             self.highlighted = self.rect.collidepoint(event.pos)
         
         if self.selected:
-            self.on_key_event(event)
+            self._on_key_event(event)
         
         if self.highlighted:
-            self.on_button_event(event)
+            self._on_button_event(event)
+
+    # Methods
+
+    def _add_actions(self, action_code: int, action_dict: _ActionDict, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
+        if action_code in action_dict:
+            action_dict[action_code].append(Action(callbacks, mods))
+        else:
+            action_dict[action_code] = [Action(callbacks, mods)]
+        
+        return self
+
+    def add_key(self, keys: IntOrList, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
+        for key in to_list(keys):
+            self._add_actions(key, self._key_actions, callbacks, mods)
+
+        return self
+
+    def clear_keys(self):
+        self._key_actions.clear()
+
+    def add_button(self, buttons: IntOrList, callbacks: EventCallbackOrList, mods: IntOrList = []) -> Self:
+        for button in to_list(buttons):
+            self._add_actions(button, self._button_actions, callbacks, mods)
+
+        return self
+
+    def clear_buttons(self):
+        self._button_actions.clear()
     
-    def update(self, dt: float, events: list[Event]):
+    def update(self, dt: float, events: EventList):
         for event in events:
-            self.on_event(event)
+            self._on_event(event)

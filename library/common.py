@@ -16,7 +16,8 @@ ColorValue = pygame.Color | tuple[int, int, int] | str
 
 IntOrList = int | list[int]
 
-Event = pygame.event.Event
+Event = pygame.event.Event | None
+EventList = list[pygame.event.Event]
 Surface = pygame.Surface
 
 def replace_color(source: Surface, old: ColorValue, new: ColorValue):
@@ -43,8 +44,14 @@ def to_hex(color: ColorValue):
     
     return f"#{color.r:02X}{color.g:02X}{color.b:02X}"
 
+def int_coords(value: Coordinate) -> tuple[int, int]:
+    return (math.floor(value[0]), math.floor(value[1]))
+
 def add_coords(coord_a: Coordinate, coord_b: Coordinate) -> Coordinate:
     return (coord_a[0] + coord_b[0], coord_a[1] + coord_b[1])
+
+def sub_coords(coord_a: Coordinate, coord_b: Coordinate) -> Coordinate:
+    return (coord_a[0] - coord_b[0], coord_a[1] - coord_b[1])
 
 def mul_coords(coord_a: Coordinate, coord_b: Coordinate) -> Coordinate:
     return (coord_a[0] * coord_b[0], coord_a[1] * coord_b[1])
@@ -76,9 +83,6 @@ def to_list(value: T | list[T]) -> list[T]:
         return [value]
     else:
         return value
-
-def to_int(value: tuple[float, float]) -> tuple[int, int]:
-    return (math.floor(value[0]), math.floor(value[1]))
 
 def str_remove_at(string: str, i: int) -> str:
     return string[:i] + string[i + 1:]

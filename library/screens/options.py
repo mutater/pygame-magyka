@@ -8,7 +8,7 @@ class OptionsScreen(Screen):
         self.form = ui.Form()
         self.form.add_draw(draw.Text(fontl, "- Options -", (umx, umy)))
     
-    def update(self, dt: float, events: list[Event]):
+    def update(self, dt: float, events: EventList):
         self.form.update(dt, events)
     
     def draw(self, window: Surface):

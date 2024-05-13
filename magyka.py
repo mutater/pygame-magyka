@@ -5,9 +5,6 @@ from library.gameManager import GameManager
 
 import library.screens as screens
 
-pygame.init()
-pygame.key.set_repeat(500, 100)
-
 gm = GameManager()
 
 sm = ScreenManager(gm)

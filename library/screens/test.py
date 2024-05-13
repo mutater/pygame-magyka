@@ -18,7 +18,7 @@ class TestScreen(Screen):
         self.textbox = ui.Textbox((umx, umy * 5), fontm, 32, "abcd efgh [[[[[[]]]]")
         self.form.add_item(self.textbox)
 
-    def update(self, dt: float, events: list[Event]):
+    def update(self, dt: float, events: EventList):
         self.form.update(dt, events)
 
     def draw(self, window: Surface):

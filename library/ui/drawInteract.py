@@ -6,7 +6,6 @@ from . import Interact
 class DrawInteract(Interact):
     def __init__(self, dest: Coordinate = (0, 0)):
         super().__init__()
-        self.rect.topleft = to_int(dest)
 
         self.color = pygame.Color("white")
         self.color_disabled = pygame.Color("darkgray")
@@ -16,24 +15,38 @@ class DrawInteract(Interact):
         self.color_pressed = pygame.Color("#8899AA")
 
         self.draws: list[Draw] = []
+        self.dest = dest
 
     # Getters / Setters
 
-    def _on_enabled(self):
-        super()._on_enabled()
+    @property
+    def dest(self):
+        return self.rect.topleft
+    
+    @dest.setter
+    def dest(self, value: Coordinate):
+        if value != self.rect.topleft:
+            for draw in self.draws:
+                draw.move(sub_coords(value, self.rect.topleft))
+            self.rect.topleft = int_coords(value)
+
+    # Events
+
+    def _on_enabled(self, event: Event):
+        super()._on_enabled(event)
         self.color = self.color_normal if self.selected else self.color_normal
     
-    def _on_disabled(self):
-        super()._on_disabled()
+    def _on_disabled(self, event: Event):
+        super()._on_disabled(event)
         self.color = self.color_disabled
 
-    def _on_pressed(self):
-        super()._on_pressed()
+    def _on_pressed(self, event: Event):
+        super()._on_pressed(event)
         if self.enabled:
             self.color = self.color_pressed
     
-    def _on_released(self):
-        super()._on_released()
+    def _on_released(self, event: Event):
+        super()._on_released(event)
         if self.enabled:
             if self.selected:
                 self.color = self.color_selected
@@ -42,23 +55,23 @@ class DrawInteract(Interact):
             else:
                 self.color = self.color_normal
     
-    def _on_selected(self):
-        super()._on_selected()
+    def _on_selected(self, event: Event):
+        super()._on_selected(event)
         if self.enabled and not self.pressed:
             self.color = self.color_selected
     
-    def _on_unselected(self):
-        super()._on_unselected()
+    def _on_unselected(self, event: Event):
+        super()._on_unselected(event)
         if self.enabled and not self.pressed and not self.highlighted:
             self.color = self.color_normal
 
-    def _on_highlighted(self):
-        super()._on_highlighted()
+    def _on_highlighted(self, event: Event):
+        super()._on_highlighted(event)
         if self.enabled and not self.pressed:
             self.color = self.color_highlighted
         
-    def _on_unhighlighted(self):
-        super()._on_unhighlighted()
+    def _on_unhighlighted(self, event: Event):
+        super()._on_unhighlighted(event)
         if self.enabled and not self.pressed and not self.selected:
             self.color = self.color_normal
     

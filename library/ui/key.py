@@ -8,8 +8,8 @@ class Key(Interact):
 
         self.add_key(to_list(keys), callbacks)
     
-    def on_event(self, event: Event):
+    def _on_event(self, event: Event):
         if not self.enabled:
             return
 
-        self.on_key_event(event)
+        self._on_key_event(event)

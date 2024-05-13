@@ -57,10 +57,14 @@ class Draw:
         color = pygame.Color(color)
         if self._color != color:
             self._update_color(color)
+
+    @property
+    def dest(self):
+        return self.rect.topleft
     
-    def set_color(self, color: ColorValue) -> Self:
-        self.color = color
-        return self
+    @dest.setter
+    def dest(self, dest: Coordinate):
+        self.rect.topleft = int_coords(dest)
 
     def get_width(self) -> int:
         return self.surface.get_width()

@@ -10,3 +10,4 @@ from . import valueContainer
 from . import component
 from . import entity
 from . import screens
+from . import console

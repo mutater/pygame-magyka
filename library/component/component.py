@@ -5,7 +5,7 @@ class Component(Serializable):
     def __init__(self):
         self.name = "Component"
 
-    def update(self, dt: float, events: list[Event]):
+    def update(self, dt: float, events: EventList):
         pass
 
     def draw(self, surface: Surface):

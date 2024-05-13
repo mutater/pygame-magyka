@@ -29,14 +29,34 @@ class Group(DrawInteract):
 
         self.selected = True
     
-    def _on_selected(self):
-        super()._on_selected()
+    # Events
+
+    def _on_selected(self, event: Event):
+        super()._on_selected(event)
         self.select_first()
 
-    def _on_unselected(self):
-        super()._on_unselected()
+    def _on_unselected(self, event: Event):
+        super()._on_unselected(event)
         self.unselect_all_but(None)
     
+    def _on_event(self, event: Event):
+        if not self.enabled or event == None:
+            return
+        
+        if self.selected:
+            self._on_key_event(event)
+
+        if event.type == pygame.MOUSEMOTION:
+            self.unselect_all_but(self.selected_item)
+
+        if event.type == pygame.MOUSEMOTION:
+            for item in self.items:
+                if item != self.selected_item and item.selected:
+                    self.select_item(item)
+                    break
+
+    # Methods
+
     def add_interact(self, interacts: Interact | list[Interact]) -> Self:
         for interact in to_list(interacts):
             self.interacts.append(interact)
@@ -88,23 +108,7 @@ class Group(DrawInteract):
                 i.selected = False
         self.selected_item = None
 
-    def on_event(self, event: Event):
-        if not self.enabled:
-            return
-        
-        if self.selected:
-            self.on_key_event(event)
-
-        if event.type == pygame.MOUSEMOTION:
-            self.unselect_all_but(self.selected_item)
-
-        if event.type == pygame.MOUSEMOTION:
-            for item in self.items:
-                if item != self.selected_item and item.selected:
-                    self.select_item(item)
-                    break
-    
-    def update(self, dt: float, events: list[Event]):
+    def update(self, dt: float, events: EventList):
         super().update(dt, events)
 
         for interact in self.interacts:

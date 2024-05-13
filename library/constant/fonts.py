@@ -7,13 +7,19 @@ charset_symbolic = ".,!?-+/():;%&`'*#=[]\"|_<>"
 charset_alphanumeric = charset_alphabetic + charset_numeric
 charset_all = " " + charset_alphabetic + charset_numeric + charset_symbolic
 
-charset = {
+_charset = {
     "alphabetic": charset_alphabetic,
     "numeric": charset_numeric,
     "symbolic": charset_symbolic,
     "alphanumeric": charset_alphanumeric,
     "all": charset_all
 }
+
+def get_charset(name: str, blacklist: str = ""):
+    charset = _charset.get(name, "")
+    for char in blacklist:
+        charset = charset.replace(char, "")
+    return charset
 
 iconset_all = [
     "", "bar_left", "bar_middle", "bar_right", "dev", "buff", "debuff",

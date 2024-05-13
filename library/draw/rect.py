@@ -9,12 +9,25 @@ class Rect(Draw):
         self.color = color
     
     @property
+    def color(self):
+        return self._color
+    
+    @color.setter
+    def color(self, color: ColorValue):
+        color = pygame.Color(color)
+        if self._color != color:
+            self._color = pygame.Color(color)
+            self._draw_surface = self.surface.copy()
+            replace_color(self._draw_surface, (255, 255, 255), color)
+
+    @property
     def size(self) -> Coordinate:
         return self.surface.get_size()
     
     @size.setter
     def size(self, value: Coordinate):
         if value != self.size:
-            super().__init__(value, self.rect.topleft)
-            self.surface.fill("white")
-            self.color = self.color
+            surface = pygame.Surface(value, pygame.SRCALPHA)
+            surface.fill("white")
+            self.update_surface(surface)
+

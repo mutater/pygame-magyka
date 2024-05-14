@@ -108,7 +108,7 @@ class Group(DrawInteract):
                 i.selected = False
         self.selected_item = None
 
-    def update(self, dt: float, events: EventList):
+    def update(self, dt: float, events: list[Event]):
         super().update(dt, events)
 
         for interact in self.interacts:

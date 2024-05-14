@@ -55,9 +55,13 @@ class Textbox(DrawInteract):
     @value.setter
     def value(self, value: str):
         if value != self._value:
-            self._value = value[0:self._max_chars]
+            self._value = value[:self._max_chars]
             self.value_text.value = self._value
             self.index = self.index
+
+    def set_value(self, value: str):
+        self.value = value
+        self.index = self.length
 
     @property
     def index(self):
@@ -65,13 +69,10 @@ class Textbox(DrawInteract):
     
     @index.setter
     def index(self, value: int):
-        if value < 0:
-            self._index = 0
-        elif value > self.length:
-            self._index = self.length
+        o_index = self._index
+        self._index = int(clamp(value, 0, self.length))
         
-        if value != self._index:
-            self._index = value
+        if o_index != self._index:
             self.cursor_text.move_to(add_coords(self.rect.topleft, (self.font.width * (self.index + len(self.start)), 0)))
 
     @property
@@ -206,7 +207,7 @@ class Textbox(DrawInteract):
             self.value += value_string
             self.index += len(value_string)
     
-    def update(self, dt: float, events: EventList):
+    def update(self, dt: float, events: list[Event]):
         super().update(dt, events)
 
         if self.selected:

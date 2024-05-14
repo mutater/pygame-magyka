@@ -23,7 +23,7 @@ class GameObject(Serializable):
         for component in to_list(components):
             self.components[component.name] = component
     
-    def update(self, dt: float, events: EventList):
+    def update(self, dt: float, events: list[Event]):
         for _, component in self.components.items():
             component.update(dt, events)
     

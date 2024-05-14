@@ -75,13 +75,16 @@ class ScreenManager:
 
             current.start()
             while not self.break_flag and current == self.top:
-                events = pygame.event.get()
+                events: list[Event] = pygame.event.get() # type: ignore
 
                 scale = (1, 1)
                 if self.window.get_height() > 1440:
                     scale = (2, 2)
 
                 for event in events:
+                    if event == None:
+                        continue
+
                     if hasattr(event, "pos"):
                         event.pos = div_coords(event.pos, scale)
 

@@ -24,7 +24,7 @@ class Screen:
     def start(self):
         pass
 
-    def update(self, dt: float, events: EventList):
+    def update(self, dt: float, events: list[Event]):
         self.form.update(dt, events)
 
     def draw(self, window: Surface):

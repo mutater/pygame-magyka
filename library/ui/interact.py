@@ -233,6 +233,6 @@ class Interact:
     def clear_buttons(self):
         self._button_actions.clear()
     
-    def update(self, dt: float, events: EventList):
+    def update(self, dt: float, events: list[Event]):
         for event in events:
             self._on_event(event)

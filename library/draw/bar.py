@@ -4,10 +4,10 @@ from ..valueContainer import ValueContainer
 from . import Text, Font
 
 class Bar(Text):
-    def __init__(self, font: Font, value: float | ValueContainer, width: int, dest: Coordinate = (0, 0), color_empty: ColorValue = "darkgray", color_filled: ColorValue = "lightgray"):
+    def __init__(self, font: Font, value: float | ValueContainer, length: int, dest: Coordinate = (0, 0), color_empty: ColorValue = "darkgray", color_filled: ColorValue = "lightgray"):
         super().__init__(font, "asdf", dest)
 
-        self.width = width
+        self.length = length
         
         if isinstance(value, ValueContainer):
             self.value_container = value
@@ -24,13 +24,13 @@ class Bar(Text):
     def __str__(self) -> str:
         string = cmd_color(self.color_filled)
 
-        for i in range(self.width):
-            if i / self.width * 100 >= self.value_percent:
+        for i in range(self.length):
+            if i / self.length * 100 >= self.value_percent:
                 string += cmd_color(self.color_empty)
             
             if i == 0:
                 string += cmd_icon("bar_left")
-            elif i == self.width - 1:
+            elif i == self.length - 1:
                 string += cmd_icon("bar_right")
             else:
                 string += cmd_icon("bar_middle")

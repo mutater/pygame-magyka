@@ -87,20 +87,15 @@ class Textbox(DrawInteract):
             return ""
         return self._value[index]
 
-    # Messages
-
-    def _on_selected(self, event: Event):
-        super()._on_selected(event)
-    
-    def _on_unselected(self, event: Event):
-        super()._on_unselected(event)
-        pygame.key.set_repeat(500, 100)
+    # Events
 
     def _on_key_event(self, event: Event):
-        if event == None or event.type != pygame.KEYDOWN:
+        if event == None:
             return
-        
-        pygame.key.set_repeat(300, 40)
+        elif event.type != pygame.KEYDOWN:
+            if event.type == pygame.KEYUP:
+                reset_key_repeat()
+            return
 
         def find_next_index(index: int, direction: int) -> int:
             ignore = None
@@ -184,9 +179,11 @@ class Textbox(DrawInteract):
         elif event.unicode != "" and event.unicode in self.charset and self.length < self._max_chars:
             self.value = self.value[:self.index] + event.unicode + (self.value[self.index:] if self.length > self.index + 1 else "")
             self.index += 1
+        
         else:
             return
 
+        pygame.key.set_repeat(300, 40)
         self.cursor_text.visible = True
         self.cursor_timer.value = -0.25
     

@@ -49,12 +49,6 @@ class Group(DrawInteract):
         if event.type == pygame.MOUSEMOTION:
             self.unselect_all_but(self.selected_item)
 
-        if event.type == pygame.MOUSEMOTION:
-            for item in self.items:
-                if item != self.selected_item and item.selected:
-                    self.select_item(item)
-                    break
-
     # Methods
 
     def add_interact(self, interacts: Interact | list[Interact]) -> Self:
@@ -106,7 +100,9 @@ class Group(DrawInteract):
         for i in self.items:
             if i != item:
                 i.selected = False
-        self.selected_item = None
+        
+        if item != self.selected_item:
+            self.selected_item = None
 
     def update(self, dt: float, events: list[Event]):
         super().update(dt, events)

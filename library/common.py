@@ -95,3 +95,6 @@ def cmd_color(color: ColorValue) -> str:
 
 def cmd_icon(icon: str) -> str:
     return f"/i[{icon}]"
+
+def reset_key_repeat():
+    pygame.key.set_repeat(500, 125)

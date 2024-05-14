@@ -16,7 +16,7 @@ class ScreenManager:
         self.break_flag = False
 
         pygame.init()
-        pygame.key.set_repeat(500, 100)
+        reset_key_repeat()
         
         self.window = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()

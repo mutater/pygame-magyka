@@ -7,18 +7,6 @@ class Rect(Draw):
         super().__init__(size, dest)
         self.surface.fill("white")
         self.color = color
-    
-    @property
-    def color(self):
-        return self._color
-    
-    @color.setter
-    def color(self, color: ColorValue):
-        color = pygame.Color(color)
-        if self._color != color:
-            self._color = pygame.Color(color)
-            self._draw_surface = self.surface.copy()
-            replace_color(self._draw_surface, (255, 255, 255), color)
 
     @property
     def size(self) -> Coordinate:

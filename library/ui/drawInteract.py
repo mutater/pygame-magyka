@@ -15,6 +15,7 @@ class DrawInteract(Interact):
         self.color_pressed = pygame.Color("#8899AA")
 
         self.draws: list[Draw] = []
+        self.draws_lookup: dict[str, Draw] = {}
         self.dest = dest
 
     # Getters / Setters
@@ -82,11 +83,28 @@ class DrawInteract(Interact):
             if isinstance(draw, tuple):
                 draw = Draw(draw[0], draw[1])
 
+            if draw.name in self.draws_lookup:
+                raise AttributeError(f"Draw with name '{draw.name}' already exists.")
+
             if offset != None:
                 self.draws.append(draw.move(offset))
             else:
                 self.draws.append(draw)
+            
+            if draw.name != "":
+                self.draws_lookup[draw.name] = draw
     
+    def get_draw(self, draw_type: type[T], name: str) -> T:
+        if name == "":
+            raise AttributeError("No name provided.")
+        
+        draw = self.draws_lookup.get(name, None)
+
+        if draw == None or not isinstance(draw, draw_type):
+            raise AttributeError(f"Draw of name '{name}' not found.")
+        else:
+            return draw
+
     def clear_draws(self):
         self.draws.clear()
 

@@ -57,20 +57,20 @@ class Console(ui.Form):
 
         self.rect_textbox_bg = draw.Rect("gray18", (1, 1))
 
-        self.text_messages = draw.Text(fontm, "")
+        self.label_messages = draw.Label(fontm, "")
 
-        self.text_hint = draw.Text(fontm, "")
-        self.text_hint.color = "darkgray"
-        self.text_hint.align = "bottomleft"
+        self.label_hint = draw.Label(fontm, "")
+        self.label_hint.color = "darkgray"
+        self.label_hint.align = "bottomleft"
 
         self.rect_hint_bg = draw.Rect("gray18", (1, 1))
         self.rect_hint_bg.align = "bottomleft"
         
         self.add_draw(self.rect_bg)
         self.add_draw(self.rect_textbox_bg)
-        self.add_draw(self.text_messages)
+        self.add_draw(self.label_messages)
         self.add_draw(self.rect_hint_bg)
-        self.add_draw(self.text_hint)
+        self.add_draw(self.label_hint)
 
         # Vars
 
@@ -233,13 +233,13 @@ class Console(ui.Form):
         self.rect_textbox_bg.size = (size[0], umy)
         self.rect_textbox_bg.dest = (0, height - umy)
 
-        self.text_messages.value = "\n".join(self.log_outputs)
+        self.label_messages.text = "\n".join(self.log_outputs)
 
         self.rect_hint_bg.dest = (0, height - umy)
         self.rect_hint_bg.size = (umx * self.hints_width, umy * len(self.hints_string.split("\n")))
 
-        self.text_hint.dest = (0, height - umy)
-        self.text_hint.value = self.hints_string
+        self.label_hint.dest = (0, height - umy)
+        self.label_hint.text = self.hints_string
 
         self.textbox.dest = self.rect_textbox_bg.dest
         self.textbox._max_chars = int(size[0] / fontm.width)

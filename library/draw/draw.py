@@ -8,6 +8,8 @@ class Draw:
     def __init__(self, value: Self, /): ...
 
     def __init__(self, *args):
+        self.name = ""
+        
         if isinstance(args[0], Draw):
             self = args[0].copy()
             return
@@ -26,6 +28,10 @@ class Draw:
             self.update_surface(Surface(surface, pygame.SRCALPHA))
         
         self.visible = True
+    
+    def named(self, name: str) -> Self:
+        self.name = name
+        return self
     
     # Getters / Setters
 

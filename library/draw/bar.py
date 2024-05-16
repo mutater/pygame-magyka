@@ -1,9 +1,9 @@
 from ..common import *
 from ..valueContainer import ValueContainer
 
-from . import Text, Font
+from . import Label, Font
 
-class Bar(Text):
+class Bar(Label):
     def __init__(self, font: Font, value: float | ValueContainer, length: int, dest: Coordinate = (0, 0), color_empty: ColorValue = "darkgray", color_filled: ColorValue = "lightgray"):
         super().__init__(font, "asdf", dest)
 
@@ -19,7 +19,7 @@ class Bar(Text):
         self.color_empty = pygame.Color(color_empty)
         self.color_filled = pygame.Color(color_filled)
         
-        self.value = self.__str__()
+        self.text = self.__str__()
 
     def __str__(self) -> str:
         string = cmd_color(self.color_filled)
@@ -44,6 +44,6 @@ class Bar(Text):
             self.value_percent = self.value_container.percent
         
         if self.value_percent != o_value_percent:
-            self.value = self.__str__()
+            self.text = self.__str__()
         
         super().draw(surface)

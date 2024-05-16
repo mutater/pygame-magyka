@@ -10,9 +10,9 @@ class TestScreen(Screen):
 
         self.form = ui.Form()
         self.form.add_draw([
-            draw.Text(fonts, "Sphinx of black quartz, judge my vow.", (umx, umy)),
-            draw.Text(fontm, "Sphinx of black quartz, judge my vow.", (umx, umy * 2)),
-            draw.Text(fontl, "Sphinx of black quartz, judge my vow.", (umx, umy * 3)),
+            draw.Label(fonts, "Sphinx of black quartz, judge my vow.", (umx, umy)),
+            draw.Label(fontm, "Sphinx of black quartz, judge my vow.", (umx, umy * 2)),
+            draw.Label(fontl, "Sphinx of black quartz, judge my vow.", (umx, umy * 3)),
             self.bar
         ])
         self.textbox = ui.Textbox((umx, umy * 5), fontm, 32, "abcd efgh [[[[[[]]]]")

@@ -7,6 +7,8 @@ charset_symbolic = ".,!?-+/():;%&`'*#=[]\"|_<>"
 charset_alphanumeric = charset_alphabetic + charset_numeric
 charset_all = " " + charset_alphabetic + charset_numeric + charset_symbolic
 
+charset_windows_invalid = "<>:\"/\\|?*"
+
 _charset = {
     "alphabetic": charset_alphabetic,
     "numeric": charset_numeric,
@@ -15,10 +17,13 @@ _charset = {
     "all": charset_all
 }
 
-def get_charset(name: str, blacklist: str = ""):
-    charset = _charset.get(name, "")
+def blacklist(charset: str, blacklist: str):
     for char in blacklist:
         charset = charset.replace(char, "")
+    return charset
+
+def get_charset(name: str):
+    charset = _charset.get(name, "")
     return charset
 
 iconset_all = [

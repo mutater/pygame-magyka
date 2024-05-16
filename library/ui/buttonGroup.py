@@ -2,7 +2,7 @@ from ..common import *
 
 from . import EventCallbackOrList, Button, Key, Group
 
-from ..draw import Font, Text
+from ..draw import Font, Label
 
 ButtonActionValue = tuple[str, str, int, EventCallbackOrList]
 
@@ -21,7 +21,7 @@ class ButtonGroup(Group):
 
             self.add_item(Button(
                 position,
-                Text(font, f"[{letter}] {word}"),
+                Label(font, f"[{letter}] {word}"),
                 callbacks
             ))
 
@@ -31,5 +31,5 @@ class ButtonGroup(Group):
             ))
 
             if i < len(interacts) - 1:
-                self.add_draw(Text(font, "|", add_coords(position, (font.width, font.height))))
+                self.add_draw(Label(font, "|", add_coords(position, (font.width, font.height))))
 

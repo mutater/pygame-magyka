@@ -8,6 +8,7 @@ class Group(DrawInteract):
         self.rect = pygame.Rect(0, 0, 0, 0)
         
         self.interacts: list[Interact] = []
+        self.interacts_lookup: dict[str, Interact] = {}
         self.items: list[Interact] = []
 
         self.first_item: Interact | None = None
@@ -53,9 +54,26 @@ class Group(DrawInteract):
 
     def add_interact(self, interacts: Interact | list[Interact]) -> Self:
         for interact in to_list(interacts):
+            if interact.name in self.interacts_lookup:
+                raise AttributeError(f"Interact with name '{interact.name}' already exists.")
+
             self.interacts.append(interact)
 
+            if interact.name != "":
+                self.interacts_lookup[interact.name] = interact
+
         return self
+
+    def get_interact(self, ui_type: type[T], name: str) -> T:
+        if name == "":
+            raise AttributeError("No name provided.")
+        
+        interact = self.interacts_lookup.get(name, None)
+
+        if interact == None or not isinstance(interact, ui_type):
+            raise AttributeError(f"Interact of name '{name}' not found.")
+        else:
+            return interact
 
     def add_item(self, interacts: Interact | list[Interact]) -> Self:
         for interact in to_list(interacts):
@@ -74,7 +92,7 @@ class Group(DrawInteract):
             self.last_item = interact
 
         return self
-    
+
     def select_item(self, item: Interact | None):
         if self.selected_item != None:
             self.selected_item.selected = False

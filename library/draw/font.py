@@ -59,7 +59,6 @@ class Font:
                 i += match.end() - match.start()
             else:
                 if string[i] not in self.chars:
-                    print(string)
                     raise AttributeError(f"'{string[i]} not found in font.'")
 
                 surfaces.append(self.char_sheet.sprite(self.chars[string[i]]))

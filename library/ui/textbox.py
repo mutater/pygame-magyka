@@ -3,7 +3,7 @@ from ..constant import fonts
 from ..timer import Timer
 
 from . import DrawInteract
-from ..draw import Font, Text
+from ..draw import Font, Label
 
 class Textbox(DrawInteract):
     def __init__(self, dest: Coordinate, font: Font, max_chars: int, value: str = "", charset: str = "all", blacklist: str = "", start = "> [", end = "]"):
@@ -12,22 +12,19 @@ class Textbox(DrawInteract):
         self.font = font
         self._max_chars = max_chars
         self._value = ""
-        self.value = value
         self._index: int = 0
-        self.index = 0
 
         self.start = start
         self.end = end
 
-        self.back_text = Text(font, f"{start}{' ' * self._max_chars}{end}")
-        self.value_text = Text(font, self.value, (font.width * len(start), 0))
-        self.cursor_text = Text(font, "_", (font.width * len(start), 0))
+        self.back_text = Label(font, f"{start}{' ' * self._max_chars}{end}")
+        self.value_text = Label(font, self.value, (font.width * len(start), 0))
+        self.cursor_text = Label(font, "_", (font.width * len(start), 0))
         self.cursor_timer = Timer(0.5)
         
-        self.charset = fonts.get_charset(charset, blacklist)
-
-        if self.charset == None:
-            raise ValueError("Invalid charset.")
+        self.charset = charset
+        self.value = value
+        self.index = 0
         
         self.add_draw(self.back_text, dest)
         self.add_draw(self.value_text, dest)
@@ -56,7 +53,7 @@ class Textbox(DrawInteract):
     def value(self, value: str):
         if value != self._value:
             self._value = value[:self._max_chars]
-            self.value_text.value = self._value
+            self.value_text.text = self._value
             self.index = self.index
 
     def set_value(self, value: str):
@@ -181,6 +178,7 @@ class Textbox(DrawInteract):
             self.index += 1
         
         else:
+            super()._on_key_event(event)
             return
 
         pygame.key.set_repeat(300, 40)

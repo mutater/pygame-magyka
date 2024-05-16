@@ -28,7 +28,7 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
         for i in range(len(title_string)):
             new_title_string += f"/c[{to_hex((25, 50 + i * 5, 250 - i * 5))}]{title_string[i]}\n"
         
-        self.form.add_draw(draw.Text(fontm, new_title_string, (umx, umy)))
+        self.form.add_draw(draw.Label(fontm, new_title_string, (umx, umy)))
 
         self.form.add_item(ui.ButtonGroup((umx * 2, umy * 17), fontm, [
             ("N", "New Game", pygame.K_n, self.new_game),
@@ -44,7 +44,7 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
     
     def new_game(self, event: Event):
         self.sm.clear()
-        self.sm.push(TestScreen)
+        self.sm.push(NewGameScreen)
     
     def options(self, event: Event):
         self.sm.push(OptionsScreen)

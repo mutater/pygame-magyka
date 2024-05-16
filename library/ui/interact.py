@@ -68,6 +68,7 @@ class Interact:
 
         self.next: Interact | None = None
         self.prev: Interact | None = None
+        self.name = ""
 
         self._enabled = True
         self._pressed = False
@@ -76,6 +77,10 @@ class Interact:
 
         self._key_actions: _ActionDict = {}
         self._button_actions: _ActionDict = {}
+    
+    def named(self, name: str) -> Self:
+        self.name = name
+        return self
     
     # Getters / Setters
 

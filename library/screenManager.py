@@ -19,7 +19,7 @@ class ScreenManager:
         pygame.init()
         reset_key_repeat()
         
-        self.base_size = (1200, 700)
+        self.base_size = (1280, 720)
         self.window = pygame.display.set_mode(self.base_size, pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.dt = 0

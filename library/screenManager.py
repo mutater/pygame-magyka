@@ -11,6 +11,7 @@ from .console import Console
 class ScreenManager:
     def __init__(self, gm: GameManager):
         self.top: Screen | None = None
+        self.current: Screen
         self.gm = gm
 
         self.break_flag = False
@@ -18,10 +19,13 @@ class ScreenManager:
         pygame.init()
         reset_key_repeat()
         
-        self.window = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
+        self.base_size = (1200, 700)
+        self.window = pygame.display.set_mode(self.base_size, pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.dt = 0
         self.console = Console(self)
+        self.scale_factor = 1
+        self.scale = (1, 1)
         
         pygame.scrap.init()
     
@@ -38,55 +42,60 @@ class ScreenManager:
 
     def push(self, Screen: Type[Screen]):
         screen = Screen(self.gm, self, Screen.name)
-
         screen.next = self.top
         self.top = screen
     
-    def pop(self) -> Screen | None:
-        if self.top == None:
+    def pop(self):
+        if self.top == None or self.top.next == None:
             return
-        else:
-            oTop = self.top
-            self.top = self.top.next
-            return oTop
+
+        self.top = self.top.next
+        self.top.next = None
     
-    def pop_to(self, name: str) -> Screen | None:
+    def pop_to(self, name: str):
         if self.top == None:
             return
 
-        oTop = self.top
         while self.top.name != name:
-            oTop = self.pop()
-        
-        return oTop
+            self.pop()
     
     def clear(self):
         self.top = None
 
-    def peek(self) -> Screen | None:
-        return self.top
+    def peek(self) -> str:
+        path = ""
+        
+        i = self.top
+        names: list[str] = []
+
+        while i != None:
+            names.insert(0, i.name.title())
+            i = i.next
+        
+        for i in range(len(names)):
+            if i != 0:
+                path += " -> "
+            
+            path += names[i]
+        
+        return path
     
     def loop(self):
         if self.top == None:
             raise Exception("No screen has been pushed yet.")
 
         while not self.break_flag:
-            current: Screen = self.top
+            self.current = self.top
 
-            current.start()
-            while not self.break_flag and current == self.top:
+            if not self.current.started:
+                self.current.start()
+            
+            while not self.break_flag and self.current == self.top:
                 events: list[Event] = pygame.event.get() # type: ignore
-
-                scale = (1, 1)
-                if self.window.get_height() > 1440:
-                    scale = (2, 2)
 
                 for event in events:
                     if event == None:
                         continue
-
-                    if hasattr(event, "pos"):
-                        event.pos = div_coords(event.pos, scale)
 
                     if event.type == pygame.QUIT:
                         return
@@ -99,17 +108,28 @@ class ScreenManager:
                             self.toggle_fullscreen()
                         elif event.key == pygame.K_BACKQUOTE:
                             self.toggle_console()
+                    elif event.type == pygame.WINDOWRESIZED:
+                        self.scale_factor = min(self.window.get_width() // self.base_size[0], self.window.get_height() // self.base_size[1])
+
+                        if self.scale_factor < 1:
+                            self.scale_factor = min(self.window.get_width() / self.base_size[0], self.window.get_height() / self.base_size[1])
+                        
+                        self.scale = (self.scale_factor, self.scale_factor)
+                    
+                    if hasattr(event, "pos"):
+                        event.pos = div_coords(event.pos, self.scale)
+
 
                 if self.console.active:
                     self.console.update(self.dt, events)
                     events = []
 
-                current.update(self.dt, events)
+                self.current.update(self.dt, events)
 
-                surface = pygame.Surface(div_coords(self.window.get_size(), scale))
+                surface = pygame.Surface(div_coords(self.window.get_size(), self.scale))
                 surface.fill("#0f1820")
 
-                current.draw(surface)
+                self.current.draw(surface)
 
                 if self.console.active:
                     self.console.draw(surface)

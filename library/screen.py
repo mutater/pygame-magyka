@@ -12,6 +12,7 @@ class Screen:
     name = "screen"
 
     def __init__(self, gm: GameManager, sm: ScreenManager, name: str):
+        self.started = False
         self.next: Screen | None = None
         self.gm = gm
         self.sm = sm
@@ -22,7 +23,7 @@ class Screen:
         self.can_back = True
     
     def start(self):
-        pass
+        self.started = True
 
     def update(self, dt: float, events: list[Event]):
         self.form.update(dt, events)

@@ -26,6 +26,7 @@ class Console(ui.Form):
         "clear": Command("Clears the console's output log."),
         "hello": Command("Prints 'Hello, world!' to the console."),
         "hi": Command("Prints 'Hi, World!' to the console."),
+        "print": Command("Prints the value of the passed variable name to the console.", args=[Arg("name", "the variable name")]),
         "say": Command("Prints the passed arg to the console.", args=[Arg("arg", "the passed arg")]),
         "quit": Command("Quits the game."),
     }
@@ -40,7 +41,7 @@ class Console(ui.Form):
         # Keys
 
         self.clear_keys()
-        self.add_key(pygame.K_RETURN, self._command)
+        self.add_key(pygame.K_RETURN, self._on_key_return)
         self.add_key(pygame.K_UP, self._on_key_up_arrow)
         self.add_key(pygame.K_DOWN, self._on_key_down_arrow)
         self.add_key(pygame.K_TAB, self._on_key_tab)
@@ -128,15 +129,45 @@ class Console(ui.Form):
     def _on_key_tab(self, event: Event):
         if self.hints != []:
             self.textbox.set_value(self.hints[self.hints_index])
-            self.hints = []
-            self.hints_string = ""
+            self.hints_command = self.hints[self.hints_index]
+            self._update_hints_string_args()
+
+    def _on_key_return(self, event: Event):
+        value = self.textbox.value.strip()
+
+        if value == "":
+            return
+        elif " " not in value:
+            command = value
+            args = []
+        else:
+            command = value.split(" ", 1)[0]
+            args = value.split(" ")[1:]
+        
+        self._log_commands_add(value)
+        self.textbox.value = ""
+        self._update_hints()
+
+        try:
+            callback = getattr(self, "command_" + command)
+
+            if callable(callback):
+                output = callback(*args)
+
+                if output != None:
+                    self._log_outputs_add(output)
+            else:
+                raise AttributeError()
+        except AttributeError:
+            self._log_outputs_add(cmd_color("indianred1") + f"Unknown command: '{command}'")
 
     def _on_event(self, event: Event | None):
         super()._on_event(event)
 
-        if event != None and event.type == pygame.KEYDOWN and event.unicode != "":
-            if event.unicode in charset_all or event.key == pygame.K_BACKSPACE:
-                self._update_hints()
+        if event != None and event.type == pygame.KEYDOWN:
+            if event.unicode not in ("", "`", "\r"):
+                if event.unicode in charset_all or event.key == pygame.K_BACKSPACE:
+                    self._update_hints()
 
     # Methods
 
@@ -145,14 +176,15 @@ class Console(ui.Form):
         self.hints = []
         self.hints_width = 0
 
-        for command, _ in Console.commands.items():
-            if command == self.hints_command:
-                self.hints = []
-                self._update_hints_string_args()
-                return
-            elif command.startswith(self.textbox.value):
-                self.hints_width = max(self.hints_width, len(command))
-                self.hints.append(command)
+        if self.hints_command != "":
+            for command, _ in Console.commands.items():
+                if command == self.hints_command:
+                    self.hints = []
+                    self._update_hints_string_args()
+                    return
+                elif command.startswith(self.textbox.value):
+                    self.hints_width = max(self.hints_width, len(command))
+                    self.hints.append(command)
         
         self.hints_index = len(self.hints) - 1
         self._update_hints_string_commands()
@@ -167,10 +199,10 @@ class Console(ui.Form):
                 self.hints_string += "\n"
     
     def _update_hints_string_args(self):
-        self.hints_string = self.hints_command + " "
+        self.hints_string = self.hints_command
 
         for arg in Console.commands[self.hints_command].args:
-            self.hints_string += arg.name
+            self.hints_string += " " + arg.name
         
         self.hints_width = len(self.hints_string)
 
@@ -185,34 +217,6 @@ class Console(ui.Form):
 
     def _has_command(self, command: str) -> bool:
         return command in Console.commands and hasattr(self, "command_")
-
-    def _command(self, event: Event):
-        value = self.textbox.value.strip()
-
-        if value == "":
-            return
-        elif " " not in value:
-            command = value
-            args = []
-        else:
-            command = value.split(" ", 1)[0]
-            args = value.split(" ")[1:]
-        
-        self._log_commands_add(value)
-        self.textbox.value = ""
-
-        try:
-            callback = getattr(self, "command_" + command)
-
-            if callable(callback):
-                output = callback(*args)
-
-                if output != None:
-                    self._log_outputs_add(output)
-            else:
-                raise AttributeError()
-        except AttributeError:
-            self._log_outputs_add(cmd_color("indianred1") + f"Unknown command: '{command}'")
 
     def update(self, dt: float, events: list[Event]):
         for interact in self.interacts:
@@ -244,14 +248,36 @@ class Console(ui.Form):
     
     # Commands
 
-    def command_clear(self, *args) -> str | None:
+    def command_clear(self, *args: str) -> str | None:
         self.log_outputs.clear()
 
-    def command_hello(self, *args) -> str | None:
+    def command_hello(self, *args: str) -> str | None:
         return "Hello, world!"
     
-    def command_hi(self, *args) -> str | None:
+    def command_hi(self, *args: str) -> str | None:
         return "Hi, world!"
     
-    def command_quit(self, *args) -> str | None:
+    def command_print(self, *args: str) -> str | None:
+        try:
+            print_string = cmd_color("gray") + args[0] + ": " + cmd_color("white")
+            value = None
+
+            for x in args[0].split("."):
+                call = False
+                if x.endswith("()"):
+                    x = x[:-2]
+                    call = True
+                
+                value = getattr(self.sm if value == None else value, x)
+                
+                if call:
+                    value = value()
+            
+            print_string += str(value)
+        except Exception:
+            print_string = cmd_color("indianred1") + f"Unknown variable: '{args[0]}'"
+        
+        return print_string
+
+    def command_quit(self, *args: str) -> str | None:
         self.sm.break_flag = True

@@ -5,6 +5,8 @@ class TitleScreen(Screen):
     name = "title"
     
     def start(self):
+        super().start()
+
         title_string = """\
   x*8888x.:d8888:.:d888b                                        x688889x                  
  X   98888X:`88888:`8888!                           8L           !8888!                  

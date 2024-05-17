@@ -32,6 +32,12 @@ class Textbox(DrawInteract):
 
         self.rect = self.get_draws_rect()
 
+        def select(event: Event):
+            self.pressed = False
+            self.selected = True
+
+        self.add_button(1, select)
+
     # Getters / Setters
 
     @property

@@ -43,7 +43,6 @@ X8888 X8888   8888  8888'    .uu689u.   .uu6889u.  `Y888k:*888.   8888 d888L    
         print("hello")
     
     def new_game(self, event: Event):
-        self.sm.clear()
         self.sm.push(NewGameScreen)
     
     def options(self, event: Event):

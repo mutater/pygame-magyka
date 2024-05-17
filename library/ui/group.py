@@ -125,6 +125,12 @@ class Group(DrawInteract):
     def update(self, dt: float, events: list[Event]):
         super().update(dt, events)
 
+        for item in self.items:
+            if item != self.selected_item and item.selected:
+                self.select_item(item)
+                self.unselect_all_but(item)
+                break
+
         for interact in self.interacts:
             interact.update(dt, events)
 

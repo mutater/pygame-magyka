@@ -157,15 +157,21 @@ class Interact:
         pass
 
     def _on_key_event(self, event: Event):
-        if event == None or event.type != pygame.KEYDOWN:
+        if event == None or event.type not in [pygame.KEYDOWN, pygame.KEYUP]:
             return
 
         if event.key not in self._key_actions:
             return
 
-        for action in self._key_actions[event.key]:
-            if action.exact_mods_pressed():
-                action.callbacks(event)
+        if event.type == pygame.KEYDOWN:
+            for action in self._key_actions[event.key]:
+                if action.exact_mods_pressed():
+                    action.callbacks(event)
+                    self.pressed = True
+        
+        else:
+            if event.key in self._key_actions:
+                self.pressed = False
     
     def _on_button_event(self, event: Event):
         if event == None or event.type not in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]:
@@ -175,8 +181,6 @@ class Interact:
             return
         
         if event.type == pygame.MOUSEBUTTONDOWN:
-            modifier_found = False
-
             for action in self._button_actions[event.button]:
                 if action.mods_pressed():
                     action.pressed = True

@@ -10,6 +10,7 @@ class GameObject(Serializable):
         self.components: dict[str, Component] = {}
 
         self.health: Health
+        self.info: Info
     
     def __getattr__(self, name: str) -> Component | None:
         if name in self.components:
@@ -21,7 +22,7 @@ class GameObject(Serializable):
 
     def add_component(self, components: Component | list[Component]):
         for component in to_list(components):
-            self.components[component.name] = component
+            self.components[type(component).__name__.lower()] = component
     
     def update(self, dt: float, events: list[Event]):
         for _, component in self.components.items():

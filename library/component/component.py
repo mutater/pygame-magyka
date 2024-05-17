@@ -3,7 +3,7 @@ from ..serializable import Serializable
 
 class Component(Serializable):
     def __init__(self):
-        self.name = "Component"
+        pass
 
     def update(self, dt: float, events: list[Event]):
         pass

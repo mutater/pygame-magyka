@@ -7,5 +7,3 @@ class Health(Component, ValueContainer):
     def __init__(self, value: int = 30):
         Component.__init__(self)
         ValueContainer.__init__(self, value)
-
-        self.name = "health"

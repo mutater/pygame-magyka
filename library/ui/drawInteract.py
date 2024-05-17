@@ -134,6 +134,14 @@ class DrawInteract(Interact):
         
         return pygame.Rect(left, top, width, height)
     
+    def move(self, offset: Coordinate) -> Self:
+        self.rect.move_ip(offset)
+        return self
+    
+    def move_to(self, dest: Coordinate) -> Self:
+        self.dest = dest
+        return self
+
     def draw(self, surface: Surface):
         self.set_draws_color(self.color)
 

@@ -51,7 +51,10 @@ class Draw:
     
     @dest.setter
     def dest(self, dest: Coordinate):
-        setattr(self.rect, self.align, int_coords(dest))
+        dest = int_coords(dest)
+
+        if dest != self.dest:
+            setattr(self.rect, self.align, int_coords(dest))
 
     @property
     def width(self) -> int:
@@ -104,7 +107,7 @@ class Draw:
         self._draw_surface = self.surface.copy()
     
     def move(self, offset: Coordinate) -> Self:
-        self.rect.move_ip(offset)
+        self.dest = add_coords(self.dest, offset)
         return self
     
     def move_to(self, dest: Coordinate) -> Self:

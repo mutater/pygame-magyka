@@ -23,11 +23,26 @@ class ValueContainer(Serializable):
         
         self.value = kwargs.get("value", self.max)
 
-    def __add__(self, value: float):
-        self.value += value
+    def __add__(self, value: float) -> float:
+        return self.value + value
     
-    def __mul__(self, value: float):
+    def __iadd__(self, value: float) -> Self:
+        self.value += value
+        return self
+    
+    def __sub__(self, value: float) -> float:
+        return self.value - value
+
+    def __isub__(self, value: float) -> Self:
+        self.value -= value
+        return self
+    
+    def __mul__(self, value: float) -> float:
+        return self.value * value
+    
+    def __imul__(self, value: float) -> Self:
         self.value *= value
+        return self
     
     def __floor__(self) -> int:
         return self.value.__floor__()
@@ -67,6 +82,10 @@ class ValueContainer(Serializable):
     def max(self, value: float):
         self._max = value
         self.value = self.value
+    
+    @property
+    def int_max(self) -> int:
+        return int(math.ceil(self.max))
 
     @property
     def value(self):
@@ -78,16 +97,16 @@ class ValueContainer(Serializable):
     
     @property
     def int_value(self) -> int:
-        return round(self.value)
+        return int(math.ceil(self.value))
     
     @property
     def percent(self) -> float:
-        return ((self.value + self.min) / (self.max - self.min)) * 100
+        return ((self.value + self.min) / (self.max - self.min))
     
     @percent.setter
     def percent(self, value: float):
-        value = clamp(value, 0, 100)
-        self.value = (self.max - self.min) * (value / 100) + self.min
+        value = clamp(value, 0, 1)
+        self.value = (self.max - self.min) * (value) + self.min
     
     @property
     def empty(self) -> bool:

@@ -32,6 +32,13 @@ class Form(Group):
         self.add_key(pygame.K_UP, select_prev_not_group)
         self.add_key(pygame.K_ESCAPE, unselect_all)
     
+    # Events
+
+    def receive_event(self, interact: Interact, event_name: str, event: Event | None):
+        pass
+
+    # Methods
+
     def add_item(self, interacts: Interact | list[Interact]) -> Self:
         for interact in to_list(interacts):
             if self.selected_item == None:

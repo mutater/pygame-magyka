@@ -5,10 +5,11 @@ if TYPE_CHECKING:
     from .screenManager import ScreenManager
 
 from .common import *
-from .constant.fonts import *
+from .fonts import *
 
 from . import ui
 from . import draw
+from .screens import *
 
 class Console(ui.Form):
     class Arg():
@@ -27,8 +28,8 @@ class Console(ui.Form):
         "hello": Command("Prints 'Hello, world!' to the console."),
         "hi": Command("Prints 'Hi, World!' to the console."),
         "print": Command("Prints the value of the passed variable name to the console.", args=[Arg("name", "the variable name")]),
-        "say": Command("Prints the passed arg to the console.", args=[Arg("arg", "the passed arg")]),
         "quit": Command("Quits the game."),
+        "s": Command("Starts the game with a generic player."),
     }
 
     def __init__(self, sm: ScreenManager):
@@ -48,7 +49,7 @@ class Console(ui.Form):
 
         # Items
 
-        self.textbox = ui.Textbox((0, 0), fontm, 100, charset="all", blacklist="`", start="", end="")
+        self.textbox = ui.Textbox((0, 0), fontm, 100, charset=charset_all, blacklist="`", start="", end="")
         self.add_item(self.textbox)
 
         # Draws
@@ -281,3 +282,9 @@ class Console(ui.Form):
 
     def command_quit(self, *args: str) -> str | None:
         self.sm.break_flag = True
+
+    def command_s(self, *args: str) -> str | None:
+        self.sm.gm.player.info.name = "Dev"
+        self.sm.clear()
+        self.sm.push(MapScreen)
+        self.sm.toggle_console()

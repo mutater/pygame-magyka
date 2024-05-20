@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from .gameManager import GameManager
 
 from .common import *
-from .constant.fonts import *
+from .fonts import *
 from .console import Console
 
 class ScreenManager:

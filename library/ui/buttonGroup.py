@@ -8,6 +8,10 @@ ButtonActionValue = tuple[str, str, int, EventCallbackOrList]
 
 class ButtonGroup(Group):
     def __init__(self, dest: Coordinate, font: Font, interacts: list[ButtonActionValue]):
+        """
+        ButtonActionValue = tuple[letter: str, word: str, key_code: int, callbacks: EventCallbackOrList]
+        """
+
         super().__init__()
 
         self.rect = pygame.Rect(dest[0], dest[1], 0, 0)

@@ -1,4 +1,4 @@
-from ..draw import Font, Sheet
+from .draw import Font, Sheet
 
 charset_alphabetic = "abcdefghijklmnopqrstuvwxyz" + "abcdefghijklmnopqrstuvwxyz".upper()
 charset_numeric = "0123456789"
@@ -17,7 +17,7 @@ _charset = {
     "all": charset_all
 }
 
-def blacklist(charset: str, blacklist: str):
+def blacklist_charset(charset: str, blacklist: str):
     for char in blacklist:
         charset = charset.replace(char, "")
     return charset

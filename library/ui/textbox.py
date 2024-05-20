@@ -1,9 +1,9 @@
 from ..common import *
-from ..constant import fonts
+from ..draw import Font, Label
 from ..timer import Timer
 
+from .. import fonts
 from . import DrawInteract
-from ..draw import Font, Label
 
 class Textbox(DrawInteract):
     def __init__(self, dest: Coordinate, font: Font, max_chars: int, value: str = "", charset: str = "all", blacklist: str = "", start = "> [", end = "]"):
@@ -22,7 +22,7 @@ class Textbox(DrawInteract):
         self.cursor_text = Label(font, "_", (font.width * len(start), 0))
         self.cursor_timer = Timer(0.5)
         
-        self.charset = charset
+        self.charset = fonts.blacklist_charset(charset, blacklist)
         self.value = value
         self.index = 0
         

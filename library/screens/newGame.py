@@ -9,7 +9,7 @@ class NewGameScreen(Screen):
 
         self.form.add_draw(draw.Label(fontm, "Enter your name.", (umx, umy)))
         self.form.add_item(
-            ui.Textbox((umx, umy * 3), fontm, 12, charset=blacklist(charset_all, charset_windows_invalid))
+            ui.Textbox((umx, umy * 3), fontm, 12, charset=blacklist_charset(charset_all, charset_windows_invalid))
             .named("name_textbox")
             .add_key(pygame.K_RETURN, self.name_textbox_submit))
         self.form.add_draw(draw.Label(fontm, "", (umx, umy * 5)).named("name_label"))

@@ -68,6 +68,7 @@ class Interact:
 
         self.next: Interact | None = None
         self.prev: Interact | None = None
+        self.parent: Interact | None = None
         self.name = ""
 
         self._enabled = True
@@ -131,30 +132,32 @@ class Interact:
     # Events
 
     def _on_enabled(self, event: Event):
-        pass
+        self.send_event("_on_enabled", event)
     
     def _on_disabled(self, event: Event):
+        self.send_event("_on_disabled", event)
+        
         self.pressed = False
         self.selected = False
         self.highlighted = False
 
     def _on_pressed(self, event: Event):
-        pass
+        self.send_event("_on_pressed", event)
     
     def _on_released(self, event: Event):
-        pass
+        self.send_event("_on_released", event)
 
     def _on_selected(self, event: Event):
-        pass
+        self.send_event("_on_selected", event)
     
     def _on_unselected(self, event: Event):
-        pass
+        self.send_event("_on_unselected", event)
 
     def _on_highlighted(self, event: Event):
-        pass
+        self.send_event("_on_highlighted", event)
         
     def _on_unhighlighted(self, event: Event):
-        pass
+        self.send_event("_on_unhighlighted", event)
 
     def _on_key_event(self, event: Event):
         if event == None or event.type not in [pygame.KEYDOWN, pygame.KEYUP]:
@@ -213,6 +216,13 @@ class Interact:
         
         if self.highlighted:
             self._on_button_event(event)
+
+    def receive_event(self, interact: Self, event_name: str, event: Event):
+        pass
+
+    def send_event(self, event_name: str, event: Event):
+        if self.parent != None:
+            self.parent.receive_event(self, event_name, event)
 
     # Methods
 

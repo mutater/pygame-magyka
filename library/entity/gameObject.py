@@ -10,15 +10,12 @@ class GameObject(Serializable):
         self.components: dict[str, Component] = {}
 
         self.health: Health
+        self.mana: Mana
         self.info: Info
     
     def __getattr__(self, name: str) -> Component | None:
         if name in self.components:
             return self.components[name]
-    
-    @classmethod
-    def new(cls) -> Self:
-        return cls()
 
     def add_component(self, components: Component | list[Component]):
         for component in to_list(components):
@@ -27,10 +24,6 @@ class GameObject(Serializable):
     def update(self, dt: float, events: list[Event]):
         for _, component in self.components.items():
             component.update(dt, events)
-    
-    def draw(self, surface: Surface):
-        for _, component in self.components.items():
-            component.draw(surface)
     
     def serialize(self) -> str | None:
         data = {

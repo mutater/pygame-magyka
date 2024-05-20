@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from .screenManager import ScreenManager
 
 from .common import *
-from .constant.fonts import *
+from .fonts import *
 from . import draw, ui, entity, component
 
 class Screen:

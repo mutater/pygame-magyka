@@ -3,8 +3,9 @@ from ..common import *
 from . import Draw, Font
 
 class Label(Draw):
-    def __init__(self, font: Font, text: str, dest: Coordinate = (0, 0)):
+    def __init__(self, font: Font, text: str, dest: Coordinate = (0, 0), color: ColorValue = "white"):
         super().__init__(font.text(text), dest)
+        self.color = color
         self._text = text
         self.text = text
         self._font = font

@@ -3,8 +3,8 @@ from ..screen import *
 class TestScreen(Screen):
     def start(self):
         self.entity = entity.GameObject()
-        self.entity.add_component(component.Health())
-        self.entity.health.percent = 50
+        self.entity.add_component(component.Life())
+        self.entity.life.percent = 50
 
         self.form = ui.Form()
         self.form.add_draw([

@@ -5,10 +5,11 @@ from ..valueContainer import ValueContainer
 from . import Label, Font, Group
 
 class Bar(Group):
-    def __init__(self, value: float | ValueContainer, length: int, dest: Coordinate = (0, 0), color_empty: ColorValue = "gray24", color_filled: ColorValue = "lightgray"):
+    def __init__(self, value: float | ValueContainer, length: int, dest: Coordinate = (0, 0), color_empty: ColorValue = "gray24", color_filled: ColorValue = "lightgray", mode = "%"):
         super().__init__(dest)
 
         self.length = length
+        self.mode = mode
         
         if isinstance(value, ValueContainer):
             self.value_container = value
@@ -42,7 +43,10 @@ class Bar(Group):
         if self.value_container == None:
             string_value = f"{int(math.ceil(self.value_percent * 100))}%"
         else:
-            string_value = f"/c[darkgray]{self.value_container.int_value}/c[white]/{self.value_container.int_max}"
+            if self.mode == "%":
+                string_value = f"{int(math.ceil(self.value_percent * 100))}%"
+            else:
+                string_value = f"/c[darkgray]{self.value_container.int_value}/c[white]/{self.value_container.int_max}"
 
         self.text_empty.text = string_empty
         self.text_filled.text = string_filled

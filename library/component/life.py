@@ -5,7 +5,7 @@ from ..valueContainer import ValueContainer
 from .. import draw
 from . import Component
 
-class Health(Component, ValueContainer):
+class Life(Component, ValueContainer):
     def __init__(self, value: int = 30):
         Component.__init__(self)
         ValueContainer.__init__(self, value)

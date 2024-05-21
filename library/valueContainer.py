@@ -44,15 +44,6 @@ class ValueContainer(Serializable):
         self.value *= value
         return self
     
-    def __floor__(self) -> int:
-        return self.value.__floor__()
-    
-    def __round__(self) -> int:
-        return self.value.__round__()
-    
-    def __ceil__(self) -> int:
-        return self.value.__int__()
-    
     def __str__(self) -> str:
         return f"{self.value:.1f}/{self.max:.1f}"
     

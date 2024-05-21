@@ -9,8 +9,9 @@ class GameObject(Serializable):
     def __init__(self):
         self.components: dict[str, Component] = {}
 
-        self.health: Health
+        self.life: Life
         self.mana: Mana
+        self.level: Level
         self.info: Info
     
     def __getattr__(self, name: str) -> Component | None:

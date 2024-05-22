@@ -1,4 +1,4 @@
-from typing import Protocol, Callable, Type, Self, TypeVar, overload
+from typing import Protocol, Callable, Type, Self, TypeVar, overload, Literal
 import math
 import pygame
 import random

@@ -51,7 +51,6 @@ class Bar(Group):
         self.text_empty.text = string_empty
         self.text_filled.text = string_filled
         self.text_value.text = string_value
-        print(self.text_value.dest)
         self.text_value.dest = add_coords(self.dest, (umx * (self.length) - 3, umy - 1))
 
     def draw(self, surface: Surface):

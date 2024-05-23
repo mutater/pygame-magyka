@@ -23,7 +23,7 @@ class MapScreen(Screen):
         ]))
 
         self.form.add_item(ui.ButtonGroup((umx * 2, umy * 17), fontm, [
-            ("I", "/c[darkgray]Inventory", pygame.K_i, self.inventory),
+            ("I", "Inventory", pygame.K_i, self.inventory),
             ("C", "/c[darkgray]Crafting", pygame.K_c, self.crafting),
             ("G", "/c[darkgray]Goals", pygame.K_g, self.goals),
             ("S", "/c[darkgray]Stats", pygame.K_s, self.stats),
@@ -50,7 +50,7 @@ class MapScreen(Screen):
         self.sm.break_flag = True
     
     def inventory(self, event: Event):
-        pass
+        self.sm.push(InventoryScreen)
 
     def crafting(self, event: Event):
         pass

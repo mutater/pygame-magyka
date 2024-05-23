@@ -3,6 +3,9 @@ from .gameObject import *
 class Entity(GameObject):
     def __init__(self):
         super().__init__()
-        self.add_component(Life())
-        self.add_component(Mana())
-        self.add_component(Level())
+
+        self.life = Life()
+        self.mana = Mana()
+        self.level = Level()
+
+        self.components += [self.life, self.mana, self.level]

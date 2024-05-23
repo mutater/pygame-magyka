@@ -4,6 +4,7 @@ from .mana import Mana
 from .experience import Experience
 from .level import Level
 from .info import Info
+from .currency import Currency
 
 _name_to_component: dict[str, type[Component]] = {
     "component": Component,

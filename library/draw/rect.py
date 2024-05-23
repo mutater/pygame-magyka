@@ -19,3 +19,8 @@ class Rect(Draw):
             surface.fill("white")
             self.update_surface(surface)
 
+class Rect(Draw):
+    def __init__(self, color: ColorValue, size: Coordinate, dest: Coordinate = (0, 0)):
+        self.name = ""
+        self.visible = True
+        self.color = color

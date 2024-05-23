@@ -7,35 +7,23 @@ from ..component import *
 
 class GameObject(Serializable):
     def __init__(self):
-        self.components: dict[str, Component] = {}
+        self.info = Info()
 
-        self.life: Life
-        self.mana: Mana
-        self.level: Level
-        self.info: Info
-    
-    def __getattr__(self, name: str) -> Component | None:
-        if name in self.components:
-            return self.components[name]
-
-    def add_component(self, components: Component | list[Component]):
-        for component in to_list(components):
-            self.components[type(component).__name__.lower()] = component
+        self.components: list[Component] = [self.info]
     
     def update(self, dt: float, events: list[Event]):
-        for _, component in self.components.items():
-            component.update(dt, events)
+        pass
     
     def serialize(self) -> str | None:
         data = {
             "components": {}
         }
 
-        for name, component in self.components.items():
+        for component in self.components:
             component_data = component.serialize()
 
             if component_data != None:
-                data["components"][name] = component_data
+                data["components"][component.__class__.__name__.lower()] = component_data
         
         return json.dumps(data)
     
@@ -46,6 +34,6 @@ class GameObject(Serializable):
             component = component_from_name(name)
 
             if component != None:
-                self.add_component(component().deserialize(component_data))
+                self.components.append(component().deserialize(component_data))
         
         return self

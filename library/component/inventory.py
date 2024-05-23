@@ -69,7 +69,7 @@ class Inventory(Component):
         name = self.name_of(item)
 
         for i in range(len(self.slots)):
-            if self.slots[i].item.name == name:
+            if self.name_of(self.slots[i]) == name:
                 return i
         
         return -1
@@ -80,7 +80,7 @@ class Inventory(Component):
         indices = []
 
         for i in range(len(self.slots)):
-            if self.slots[i].item.name == name:
+            if self.name_of(self.slots[i]) == name:
                 indices.append(i)
         
         return indices

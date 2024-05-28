@@ -1,8 +1,8 @@
 from ..common import *
 
-from . import Draw, Font
+from . import DrawSurface, Font
 
-class Label(Draw):
+class Label(DrawSurface):
     def __init__(self, font: Font, text: str, dest: Coordinate = (0, 0), color: ColorValue = "white"):
         super().__init__(font.text(text), dest)
         self.color = color

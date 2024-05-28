@@ -1,15 +1,22 @@
-from library.common import Surface
 from ..screen import *
 from . import *
 
 class InventoryScreen(Screen):
-    name = "map"
+    name = "inventory"
 
     def start(self):
-        super().start()
+        self.form_type = ui.Form()
+        self.form_type.add_draw(draw.Column("gray20", umx * 20, umx))
+
+        self.form_items = ui.Form()
+        self.form_inspect = ui.Form()
     
-    def update(self, dt: float, events: list[Event | None]):
-        super().update(dt, events)
+    def update(self, dt: float, events: list[Event]):
+        self.form_type.update(dt, events)
+        self.form_items.update(dt, events)
+        self.form_inspect.update(dt, events)
     
     def draw(self, window: Surface):
-        super().draw(window)
+        self.form_type.draw(window)
+        self.form_items.draw(window)
+        self.form_inspect.draw(window)

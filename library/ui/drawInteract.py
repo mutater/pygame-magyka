@@ -11,7 +11,7 @@ class DrawInteract(Interact):
         self.color_disabled = pygame.Color("darkgray")
         self.color_normal = pygame.Color("white")
         self.color_selected = pygame.Color("#BBDDFF")
-        self.color_highlighted = self.color_selected
+        self.color_highlighted = pygame.Color("#AACCEE")
         self.color_pressed = pygame.Color("#8899AA")
 
         self.draws: list[Draw] = []

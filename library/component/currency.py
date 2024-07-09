@@ -28,7 +28,7 @@ class Currency(Component):
     ]
 
     UnitValue = Literal[
-        "sapphire",
+        "celest",
         "aural",
         "argent",
         "lumen",

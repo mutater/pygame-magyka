@@ -16,7 +16,6 @@ ColorValue = pygame.Color | tuple[int, int, int] | str
 
 IntOrList = int | list[int]
 
-Event = pygame.event.Event | None
 Surface = pygame.Surface
 
 def replace_color(source: Surface, old: ColorValue, new: ColorValue):

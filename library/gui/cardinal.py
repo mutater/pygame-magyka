@@ -5,11 +5,16 @@ class Cardinal():
     def __init__(self, up: int = 0, down: int = 0, left: int = 0, right: int = 0, /): ...
 
     @overload
+    def __init__(self, up_down_left_right: tuple[int, int, int, int]): ...
+
+    @overload
     def __init__(self, cardinal: Self, /): ...
 
     def __init__(self, *args):
         if isinstance(args[0], Cardinal):
             self.set(args[0].up, args[0].down, args[0].left, args[0].right)
+        elif isinstance(args[0], tuple):
+            self.__init__(*args[0])
         elif len(args) == 4:
             for arg in args:
                 if not isinstance(arg, int):
@@ -28,3 +33,5 @@ class Cardinal():
             self.left = max(0, left)
         if right != None:
             self.right = max(0, right)
+
+CardinalValue = tuple[int, int, int, int] | Cardinal

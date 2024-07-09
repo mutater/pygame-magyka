@@ -5,12 +5,17 @@ class Point:
     def __init__(self, point: Self, /): ...
 
     @overload
+    def __init__(self, x_y: tuple[int, int], /): ...
+
+    @overload
     def __init__(self, x: int = 0, y: int = 0, /): ...
 
     def __init__(self, *args):
         if isinstance(args[0], Point):
             self.x = args[0].x
             self.y = args[0].y
+        elif isinstance(args[0], tuple):
+            self.__init__(*args[0])
         elif len(args) == 2:
             for arg in args:
                 if not isinstance(arg, int):
@@ -43,3 +48,5 @@ class Point:
     
     def as_tuple(self) -> tuple[int, int]:
         return (self.x, self.y)
+
+PointValue = tuple[int, int] | Point

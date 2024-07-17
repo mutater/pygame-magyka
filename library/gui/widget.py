@@ -133,6 +133,9 @@ class Widget():
         """Returns True if a point is inside this widget's rect."""
         return self.rect.collidepoint(point.x, point.y)
 
+    def draw(self, surface: pygame.Surface):
+        pass
+
     # - Signals ----------------------------------------------------------------------------------
 
     def _get_signal(self, name: str) -> Signal:
